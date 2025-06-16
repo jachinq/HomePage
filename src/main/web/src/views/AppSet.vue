@@ -20,11 +20,13 @@ export default {
     async update(data) {
       data.name = randomString(6);
       if ((await updateAppSet(data)).success) {
+        this.$toast.success("修改成功✌️")
         await this.getAppSetList();
       }
     },
     async del(data) {
       if ((await deleteAppSet(data)).success) {
+        this.$toast.success("删除成功✌️")
         await this.getAppSetList();
       }
     },
@@ -48,7 +50,7 @@ export default {
     </div>
 
     <div class="flex my-4">
-      <div class="px-4 py-2 bg-gray-200 rounded-lg flex justify-between items-center hover:bg-gray-300 cursor-pointer"
+      <div class="px-4 py-2 bg-gray-200 rounded-lg flex justify-between items-center hover:bg-gray-300 cursor-pointer select-none"
            @click="add()">
         添加
       </div>
@@ -79,6 +81,9 @@ export default {
               </div>
             </div>
           </div>
+        </div>
+        <div v-if="appSet.length === 0">
+          暂无数据
         </div>
       </div>
     </div>
