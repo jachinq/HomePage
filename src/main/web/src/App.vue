@@ -1,20 +1,22 @@
 <template>
-  <div class="content">
-<!--    <h1>Rsbuild with Crm</h1>-->
-<!--    <p>Start building amazing things with Rsbuild.</p>-->
-<!--    <p>This is a sample app created using Rsbuild and Crm.</p>-->
-    <div class="button_flex">
-      <button @click="getList">getList</button>
-      <button @click="addSex">addSex</button>
-    </div>
+  <div class="flex flex-col items-center justify-center min-h-[100vh]">
+<!--    <div class="flex flex-col items-center justify-center">-->
+<!--      <button class="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="getList">getList</button>-->
+<!--      <button class="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="addSex">addSex</button>-->
+<!--    </div>-->
+    <AppSet />
   </div>
 </template>
 
 <script>
-import * as http from "./utils/http.js";
+import FetchUtil from "./utils/fetchUtil.ts";
+import AppSet from "./views/AppSet.vue";
 
 export default {
   name: "App",
+  components: {
+    AppSet
+  },
   data() {
     return {
       message: "Hello, World!"
@@ -23,7 +25,7 @@ export default {
   methods: {
     getList() {
       // 发送请求
-      http.get("/sex-daily/list").then(response => {
+      FetchUtil.get("/sex-daily/list").then(response => {
         console.log(response);
         return response.json()
       }).then(data => {
@@ -39,7 +41,7 @@ export default {
         createTime: new Date().getTime(),
       };
       // 发送请求
-      http.post("/sex-daily/add", data).then(response => {
+      FetchUtil.post("/sex-daily/add", data).then(response => {
         console.log(response);
         return response.json()
       }).then(data => {
@@ -53,30 +55,4 @@ export default {
 </script>
 
 <style scoped>
-.content {
-  display: flex;
-  min-height: 100vh;
-  line-height: 1.1;
-  text-align: center;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.content h1 {
-  font-size: 3.6rem;
-  font-weight: 700;
-}
-
-.content p {
-  font-size: 1.2rem;
-  font-weight: 400;
-  opacity: 0.5;
-}
-
-.button_flex {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 10px;
-}
 </style>
