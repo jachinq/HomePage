@@ -1,8 +1,8 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import './styles/index.css';
-import ToastPlugin from './components/Toast';
+import router from './router'
 
 const app = createApp(App);
-app.use(ToastPlugin);
+app.use(router)
 app.mount('#root');
