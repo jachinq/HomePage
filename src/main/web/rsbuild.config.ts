@@ -4,6 +4,9 @@ import { pluginVue } from '@rsbuild/plugin-vue';
 export default defineConfig({
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   plugins: [pluginVue()],
+  dev: {
+    writeToDisk: false,
+  },
   output: {
     distPath: {
       root: '../resources/static'
