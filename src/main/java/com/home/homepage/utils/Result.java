@@ -19,6 +19,7 @@ public class Result {
     private int code;
     private int total;
     private String msg;
+    private Boolean success;
     private Object data;
 
     public static Result success() {
@@ -26,7 +27,7 @@ public class Result {
     }
 
     public static Result success(Object data) {
-        return success("success", data);
+        return success("ok", data);
     }
 
     public static Result success(String msg) {
@@ -44,6 +45,7 @@ public class Result {
         result.setCode(200);
         result.setMsg(msg);
         result.setData(data);
+        result.setSuccess(true);
         return result;
     }
 
@@ -51,6 +53,7 @@ public class Result {
         Result result = new Result();
         result.setCode(code);
         result.setMsg(msg);
+        result.setSuccess(false);
         return result;
     }
 }
