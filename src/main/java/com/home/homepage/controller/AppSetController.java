@@ -41,8 +41,8 @@ public class AppSetController {
     }
 
     @GetMapping("/list")
-    public Result list(){
-        return appSetService.list();
+    public Result list(AppSet dto){
+        return appSetService.list(dto);
     }
 
 }
