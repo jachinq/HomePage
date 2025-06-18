@@ -1,17 +1,17 @@
 <template>
-  <div class="pagination">
+  <div class="flex justify-center items-center w-full h-full gap-2">
     <button 
-      class="pagination-btn" 
+      class="px-2 py-1 rounded-md text-sm font-medium leading-5 text-gray-400 bg-gray-600 border border-gray-500 cursor-pointer hover:bg-gray-800 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-600 active:text-gray-400 transition ease-in-out duration-150 disabled:cursor-not-allowed"
       :disabled="currentPage === 1"
       @click="handlePageChange(currentPage - 1)"
     >
       上一页
     </button>
     
-    <div class="pagination-pages">
+    <div class="flex gap-2">
       <template v-for="page in displayedPages" :key="page">
         <button 
-          class="pagination-btn"
+          class="px-2 py-1 rounded-md text-sm font-medium leading-5 text-gray-400 bg-gray-600 border border-gray-500 cursor-pointer hover:bg-gray-800 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-600 active:text-gray-400 transition ease-in-out duration-150 disabled:cursor-not-allowed"
           :class="{ active: page === currentPage }"
           @click="handlePageChange(page)"
         >
@@ -21,14 +21,14 @@
     </div>
 
     <button 
-      class="pagination-btn" 
+      class="px-2 py-1 rounded-md text-sm font-medium leading-5 text-gray-400 bg-gray-600 border border-gray-500 cursor-pointer hover:bg-gray-800 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-600 active:text-gray-400 transition ease-in-out duration-150 disabled:cursor-not-allowed"
       :disabled="currentPage === totalPages"
       @click="handlePageChange(currentPage + 1)"
     >
       下一页
     </button>
 
-    <div class="pagination-info">
+    <div class="text-sm text-gray-400">
       共 {{ totalPages }} 页
     </div>
   </div>
@@ -73,50 +73,3 @@ const handlePageChange = (page: number) => {
   }
 }
 </script>
-
-<style scoped>
-.pagination {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.pagination-btn {
-  padding: 6px 12px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  background-color: #fff;
-  color: #606266;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.pagination-btn:hover:not(:disabled) {
-  color: #409eff;
-  border-color: #c6e2ff;
-  background-color: #ecf5ff;
-}
-
-.pagination-btn.active {
-  color: #fff;
-  background-color: #409eff;
-  border-color: #409eff;
-}
-
-.pagination-btn:disabled {
-  cursor: not-allowed;
-  color: #c0c4cc;
-  background-color: #f5f7fa;
-}
-
-.pagination-pages {
-  display: flex;
-  gap: 4px;
-}
-
-.pagination-info {
-  margin-left: 16px;
-  color: #606266;
-  font-size: 14px;
-}
-</style> 

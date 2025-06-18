@@ -8,7 +8,7 @@
 <!--    <TabGroup @change="changeTab">-->
 <!--      <TabList>-->
 <!--        <Tab as="template" v-slot="{ selected }" v-for="tab in tabList" >-->
-<!--          <button :class="{ 'bg-blue-500 text-white': selected, 'bg-white text-black': !selected }">-->
+<!--          <button :class="{ 'bg-blue-500 text-white': selected, 'bg-gray-800 text-black': !selected }">-->
 <!--            {{ tab.name }}-->
 <!--          </button>-->
 <!--        </Tab>-->

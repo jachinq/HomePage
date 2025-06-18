@@ -11,9 +11,9 @@
       :style="{ top: `${top}px` }"
       :class="[
         {
-          'bg-green-50 text-green-500': type === 'success',
-          'bg-red-50 text-red-500': type === 'error',
-          'bg-orange-50 text-orange-500': type === 'warning'
+          'bg-green-50 text-green-800': type === 'success',
+          'bg-red-50 text-red-800': type === 'error',
+          'bg-orange-50 text-orange-800': type === 'warning'
         }
       ]"
     >
