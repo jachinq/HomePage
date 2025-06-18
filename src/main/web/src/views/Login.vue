@@ -1,32 +1,47 @@
 <script>
-  import {login as loginApi} from "../api/AuthApi.js";
-  import {useUserStore} from '../stores/useUserStore.ts'
+import {login} from "../api/AuthApi.js";
+import {useUserStore} from '../stores/useUserStore.ts'
+import storage from "../utils/storage.js";
 
-  const { state, login, logout } = useUserStore()
+const userStore = useUserStore()
 
-  export default {
-    name: 'Login',
-    data() {
-      return {
-        username: '',
-        password: ''
-      }
-    },
-    methods: {
-       async handleLogin() {
-        const result = await loginApi({
-          username: this.username,
-          password: this.password
-        });
-        if (result.success) {
-          login(result.data)
-          this.$router.push('/')
-        } else {
-          this.$toast.error(result.msg)
-        }
+export default {
+  name: 'Login',
+  data() {
+    return {
+      username: '',
+      password: ''
+    }
+  },
+  methods: {
+    async handleLogin() {
+      const result = await login({
+        username: this.username,
+        password: this.password
+      });
+      if (result.success) {
+        userStore.login(result.data)
+        // token写入storage
+        storage.setToken(result.data?.token || '')
+        const userName = result.data?.user?.username || ''
+        this.$toast.success('欢迎回来~' + userName)
+        this.$router.push('/')
+      } else {
+        this.$toast.error(result.msg)
       }
     }
+  },
+  async created() {
+    if (userStore.state.isLogin) {
+      this.$router.push('/')
+      return
+    }
+    await userStore.validateToken();
+    if (userStore.state.isLogin) {
+      this.$router.push('/')
+    }
   }
+}
 
 </script>
 

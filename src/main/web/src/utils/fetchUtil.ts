@@ -1,5 +1,6 @@
-// 判断是开发模式还是生产模式
+import storage from './storage';
 
+// 判断是开发模式还是生产模式
 const isDev = process.env.NODE_ENV === 'development';
 console.log('isDev:', isDev);
 
@@ -11,6 +12,16 @@ function procUrl(url: string): string {
     return url;
 }
 
+// 请求头附带token处理
+function procHeaders(headers: any = {}) {
+    const token = storage.getItem('token');
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
+    }
+    return headers;
+}
+
+// 封装请求
 export default {
 
     get: (url: string, data: any, headers: any = {}) => {
@@ -19,7 +30,7 @@ export default {
         }
         return fetch(procUrl(url), {
             method: 'GET',
-            headers: headers,
+            headers: procHeaders(headers),
         });
     },
 
@@ -28,7 +39,7 @@ export default {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...headers,
+                ...procHeaders(headers),
             },
             body: JSON.stringify(data),
         });

@@ -1,6 +1,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import {register} from "../api/AuthApi.js";
+import { getCurrentInstance } from "vue";
+const context = getCurrentInstance()?.appContext.config.globalProperties;
+const toast = context?.$toast;
 
 const router = useRouter()
 const username = ref('')
@@ -9,10 +13,19 @@ const confirmPassword = ref('')
 
 const handleRegister = async () => {
   if (password.value !== confirmPassword.value) {
-    alert('两次输入的密码不一致')
+    toast.error('两次输入的密码不一致')
     return
   }
-  // TODO: 实现注册逻辑
+  let result = await register({
+    username: username.value,
+    password: password.value
+  });
+  if (!result.success) {
+    toast.error(result.msg)
+    return
+  }
+  // 注册成功，返回登录页面
+  await router.push('/login')
   console.log('注册:', username.value, password.value)
 }
 </script>
