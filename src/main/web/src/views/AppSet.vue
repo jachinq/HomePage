@@ -2,6 +2,7 @@
 import {Menu, MenuButton, MenuItems, MenuItem, Switch} from "@headlessui/vue";
 import SearchInput from "../components/SearchInput.vue";
 import Pagination from "../components/Pagination.vue";
+import EditModal from "./appset/EditModal.vue";
 </script>
 <script>
 import {addAppSet, deleteAppSet, getAppSetList, updateAppSet} from "../api/appSetApi.js";
@@ -17,16 +18,12 @@ export default {
       pageSize: 10,
       searchValue: "",
       innerMode: false,
+      openModal: false,
     }
   },
   methods: {
     async add() {
-      if ((await addAppSet({
-        name: "test",
-        description: "safa",
-      })).success) {
-        await this.searchList();
-      }
+      this.openModal = true;
     },
     async update(data) {
       data.name = randomString(6);
@@ -61,10 +58,36 @@ export default {
       }
       this.appSet = result.data.content;
       this.totalPages = result.data.totalPages;
+    },
+    openApp(app) {
+      console.log(app)
+      if (this.innerMode) {
+        if (app.innerUrl && app.port) {
+          window.open(`${app.innerUrl}:${app.port}`, "_blank");
+        } else {
+          this.$toast.error("未配置内网地址或端口，无法使用内网模式打开")
+        }
+      }
+      else {
+        if (!app.outerUrl) {
+          this.$toast.error("未配置外网地址")
+          return
+        }
+        window.open(app.outerUrl, "_blank");
+      }
     }
   },
   created() {
     this.searchList();
+
+    // 判断一下地址是否为内网地址
+    const url = new URL(window.location.href);
+    const hostname = url.hostname;
+    if (hostname.includes("192.168")
+        || hostname.includes("localhost")
+        || hostname.includes("127.0.0.1")) {
+      this.innerMode = true;
+    }
   }
 }
 </script>
@@ -72,8 +95,9 @@ export default {
 <template>
   <div class="min-h-full min-w-full">
 
-    <div class="mb-2">
+    <div class="mb-2 flex items-center justify-between">
       <span class="text-2xl font-bold">App Set</span>
+      <span class="text-sm text-gray-400 cursor-pointer hover:underline" @click="$router.push('/')">home</span>
     </div>
 
     <div class="my-2">
@@ -111,7 +135,7 @@ export default {
         <div v-for="app in appSet" class="w-full md:w-1/4 xl:w-1/6 mr-4 my-2">
           <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <div class="px-6 py-4 relative">
-              <div class="font-bold text-xl mb-2">{{ app.name }}</div>
+              <div class="font-bold text-xl mb-2 cursor-pointer hover:underline" @click="openApp(app)">{{ app.name }}</div>
               <p class="text-gray-700 text-base">
                 {{ app.description }}
               </p>
@@ -164,6 +188,9 @@ export default {
                     @update:current-page="pageNum = $event; searchList()"/>
       </div>
     </div>
+
+
+    <EditModal :open-modal="openModal" @close="openModal = false"/>
   </div>
 </template>
 
