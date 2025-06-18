@@ -1,13 +1,13 @@
 package com.home.homepage.service;
 
 import com.home.homepage.entity.AppSet;
+import com.home.homepage.entity.modal.AppSetListModal;
 import com.home.homepage.repository.AppSetRepository;
 import com.home.homepage.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * @author Jachin
@@ -39,13 +39,15 @@ public class AppSetService {
         return Result.success(dto);
     }
 
-    public Result list(AppSet dto) {
-        List<AppSet> all = null;
+    public Result list(AppSetListModal dto) {
+        Pageable pageable = dto.getPageable();
+        Page<AppSet> all;
         if (dto.getName() != null) {
-            all = appSetRepository.findByNameIsContainingOrDescriptionIsContaining(dto.getName(), dto.getName());
+            all = appSetRepository.findByNameIsContainingOrDescriptionIsContaining(dto.getName(), dto.getName(), pageable);
         } else {
-            all = appSetRepository.findAll();
+            all = appSetRepository.findAll(pageable);
         }
-        return Result.success(all, all.size());
+
+        return Result.success(all);
     }
 }

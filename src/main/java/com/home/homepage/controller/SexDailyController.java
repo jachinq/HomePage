@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sex-daily")
 public class SexDailyController {
 
+    private final SexDailyService sexService;
+
     @Autowired
-    private SexDailyService sexService;
+    public SexDailyController(SexDailyService sexService) {
+        this.sexService = sexService;
+    }
 
     @PostMapping("/add")
     public Result create(@RequestBody SexDaily dto){

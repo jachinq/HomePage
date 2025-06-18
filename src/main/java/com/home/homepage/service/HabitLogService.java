@@ -28,6 +28,6 @@ public class HabitLogService {
 
     public Result list() {
         List<HabitLog> all = habitLogRepository.findAll();
-        return Result.success(all, all.size());
+        return Result.success(all);
     }
 }

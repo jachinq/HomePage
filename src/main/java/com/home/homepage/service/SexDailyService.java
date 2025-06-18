@@ -26,6 +26,6 @@ public class SexDailyService {
 
     public Result list() {
         List<SexDaily> all = sexDailyRepository.findAll();
-        return Result.success(all, all.size());
+        return Result.success(all);
     }
 }

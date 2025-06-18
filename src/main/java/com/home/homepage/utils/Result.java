@@ -3,21 +3,20 @@ package com.home.homepage.utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
-
-import java.util.List;
 
 /**
  * @author Jachin
  * @since 25-06-13 11:56
  */
 @Data
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 public class Result {
     private int code;
-    private int total;
     private String msg;
     private Boolean success;
     private Object data;
@@ -32,12 +31,6 @@ public class Result {
 
     public static Result success(String msg) {
         return success(msg, null);
-    }
-
-    public static <T> Result success(List<T> list, int total) {
-        Result success = success(list);
-        success.setTotal(total);
-        return success;
     }
 
     public static Result success(String msg, Object data) {

@@ -1,6 +1,7 @@
 package com.home.homepage.controller;
 
 import com.home.homepage.entity.AppSet;
+import com.home.homepage.entity.modal.AppSetListModal;
 import com.home.homepage.service.AppSetService;
 import com.home.homepage.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class AppSetController {
     }
 
     @GetMapping("/list")
-    public Result list(AppSet dto){
+    public Result list(AppSetListModal dto){
         return appSetService.list(dto);
     }
 

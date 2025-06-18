@@ -1,10 +1,10 @@
 package com.home.homepage.repository;
 
 import com.home.homepage.entity.AppSet;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * @author Jachin
@@ -12,5 +12,5 @@ import java.util.List;
  */
 @Repository
 public interface AppSetRepository extends JpaRepository<AppSet, Long> {
-    public List<AppSet> findByNameIsContainingOrDescriptionIsContaining(String dtoName, String dtoDescription);
+    public Page<AppSet> findByNameIsContainingOrDescriptionIsContaining(String dtoName, String dtoDescription, Pageable pageable);
 }
