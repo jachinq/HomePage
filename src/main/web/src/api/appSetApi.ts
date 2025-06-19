@@ -10,18 +10,10 @@ export function getAppSetList(data: any): Promise<Result> {
     );
 }
 
-export function addAppSet(data: any): Promise<Result> {
+export function saveAppSet(data: any): Promise<Result> {
 
     return new Promise((resolve, reject) =>
-        FetchUtil.post('/api/appSet/add', data).then(res => res.json())
-            .then(data => resolve(data))
-            .catch(err => reject(err))
-    );
-}
-
-export function updateAppSet(data: any): Promise<Result> {
-    return new Promise((resolve, reject) =>
-        FetchUtil.post('/api/appSet/update', data).then(res => res.json())
+        FetchUtil.post('/api/appSet/save', data).then(res => res.json())
             .then(data => resolve(data))
             .catch(err => reject(err))
     );

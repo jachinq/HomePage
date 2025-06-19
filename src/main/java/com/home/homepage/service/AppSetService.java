@@ -43,9 +43,9 @@ public class AppSetService {
         Pageable pageable = dto.getPageable();
         Page<AppSet> all;
         if (dto.getName() != null) {
-            all = appSetRepository.findByNameIsContainingOrDescriptionIsContaining(dto.getName(), dto.getName(), pageable);
+            all = appSetRepository.findByUserIdAndNameIsContainingOrDescriptionIsContaining(dto.getUserId(), dto.getName(), pageable);
         } else {
-            all = appSetRepository.findAll(pageable);
+            all = appSetRepository.findByUserId(dto.getUserId(), pageable);
         }
 
         return Result.success(all);

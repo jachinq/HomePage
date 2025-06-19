@@ -13,4 +13,5 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class AppSetListModal extends ListModal{
     private String name;
+    private Long userId;
 }

@@ -32,7 +32,7 @@ public class AppSet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId;
+    private Long userId;
     private Integer type; // 类型 0-系统 1-自定义
     private Integer status; // 状态 0-禁用 1-启用
     private Integer port; // 端口号

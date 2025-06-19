@@ -4,8 +4,10 @@
       type="text"
       v-model="searchQuery"
       @input="handleSearch"
+      @keydown.enter="handleEnter"
       placeholder="搜索..."
-      class="w-full px-4 py-2 text-gray-700 bg-gray-800 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      class="w-full px-4 py-2 text-gray-400 bg-gray-800 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+      :class="customClass"
     />
     <div class="absolute inset-y-0 right-0 flex items-center pr-3">
       <svg
@@ -27,13 +29,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, defineProps } from 'vue'
+
+const props = defineProps({
+  customClass: {
+    type: [String, null],
+    default: () => '',
+  },
+})
 
 const searchQuery = ref('')
 
-const emit = defineEmits(['search'])
+const emit = defineEmits(['search', 'enter'])
 
 const handleSearch = () => {
   emit('search', searchQuery.value)
+}
+const handleEnter = (event: KeyboardEvent) => {
+  if (event.key === 'Enter') {
+    emit('enter', searchQuery.value)
+  }
 }
 </script> 

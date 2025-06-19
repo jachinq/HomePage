@@ -5,8 +5,7 @@ import Pagination from "../components/Pagination.vue";
 import EditModal from "./appset/EditModal.vue";
 </script>
 <script>
-import {deleteAppSet, getAppSetList, updateAppSet} from "../api/appSetApi.js";
-import {randomString} from "../utils/commUtil.js";
+import {getAppSetList} from "../api/appSetApi.js";
 
 export default {
   name: 'AppSet',
@@ -101,12 +100,12 @@ export default {
 
     <div class="flex mt-2 items-center gap-4">
       <div
-          class="px-4 py-2 bg-gray-200 rounded-lg flex justify-between items-center hover:bg-gray-300 cursor-pointer select-none"
+          class="px-4 py-2 bg-gray-800 rounded-lg flex justify-between items-center hover:bg-gray-700 cursor-pointer select-none"
           @click="edit()">
         添加
       </div>
 
-      <div class="px-4 py-2 bg-gray-200 rounded-lg flex justify-between items-center hover:bg-gray-300 cursor-pointer"
+      <div class="px-4 py-2 bg-gray-800 rounded-lg flex justify-between items-center hover:bg-gray-700 cursor-pointer"
            @click="searchList()">
         刷新
       </div>
@@ -114,7 +113,7 @@ export default {
       <div class=" flex items-center gap-2">
         <span class="text-gray-400">内网模式</span>
         <Switch v-model="innerMode"
-                :class="innerMode ? 'bg-blue-600' : 'bg-gray-200'"
+                :class="innerMode ? 'bg-blue-600' : 'bg-gray-500'"
                 class="relative inline-flex h-6 w-11 items-center rounded-full">
           <span class="sr-only">Inner Mode</span>
           <span
@@ -139,7 +138,7 @@ export default {
               </p>
 
               <div class="absolute top-1/8 right-2 z-50 mx-2">
-                <button class="bg-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 hover:bg-gray-300"
+                <button class="bg-gray-700 rounded-lg px-4 py-2 text-sm text-gray-400 hover:bg-gray-600"
                         @click="edit(app)">
                   修改
                 </button>

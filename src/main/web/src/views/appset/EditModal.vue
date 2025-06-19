@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription, RadioGroup, RadioGroupOption,
 } from '@headlessui/vue'
-import {addAppSet, deleteAppSet} from "../../api/appSetApi.ts";
+import {saveAppSet, deleteAppSet} from "../../api/appSetApi.ts";
 import {getCurrentInstance} from "vue";
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
@@ -48,7 +48,7 @@ const submitForm = async () => {
   if (!formData.value.description) {
     formData.value.description = "我也不知道它是干嘛的";
   }
-  let result = await addAppSet(formData.value);
+  let result = await saveAppSet(formData.value);
   if (result.success) {
     toast?.success(result.msg);
     handleOpenModalChange({
