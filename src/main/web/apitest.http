@@ -1,0 +1,47 @@
+## 后端接口测试，使用 Vscode Rest Client 插件进行测试。
+## 需要下载对应插件，并在 vscode 的设置 json 文件中配置环境变量：{{url}}、{{token}}
+## 具体配置的数据：
+## 
+##    "rest-client.environmentVariables": {
+##        "dev": {
+##            "url": "http://127.0.0.1:8080",
+##            "token": "xxx"
+##        }
+##    },
+##
+
+### 验证token有效性
+POST {{url}}/api/auth/validate
+Content-Type: application/json
+
+{
+  "token": "{{token}}"
+}
+
+### 获取配置信息
+GET {{url}}/api/appConfig/info
+Authorization: Bearer {{token}}
+
+
+### 设置配置信息
+post {{url}}/api/appConfig/save
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": 1,
+  "blankApp": true,
+  "blankBookmark": true,
+  "innerDomain": "192.168.1.100",
+  "outerDomain": "xxx.xyz"
+}
+
+
+### 获取应用列表
+GET {{url}}/api/appSet/list
+Authorization: Bearer {{token}}
+
+### 测试跨域请求转发
+GET {{url}}/api/cors/bing?keyword=java
+Authorization: Bearer {{token}}
+
