@@ -1,22 +1,17 @@
 package com.home.homepage.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.home.homepage.utils.CalendarUtil;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 /**
- * 应用集
+ * 应用配置
  *
  * @author Jachin
  * @since 25-06-16 10:29
@@ -26,18 +21,31 @@ import java.util.Calendar;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@Table(name = "appConfig")
+@Table(name = "app_config")
 @Entity
 public class AppConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId;
-    private String innerDomain;
-    private String outerDomain;
+    private Long userId;
+    private Boolean blankApp;       // 是否在新窗口打开应用
+    private Boolean blankBookmark;  // 是否在新窗口打开书签
+    private String innerDomain;     // 内网域名
+    private String outerDomain;     // 外网域名
 
     @CreationTimestamp
+    @ToString.Exclude
     private Calendar createTime;
     @UpdateTimestamp
+    @ToString.Exclude
     private Calendar updateTime;
+
+    @ToString.Include
+    private String creatTime() {
+        return CalendarUtil.format(createTime);
+    }
+    @ToString.Include
+    private String updateTime() {
+        return CalendarUtil.format(updateTime);
+    }
 }

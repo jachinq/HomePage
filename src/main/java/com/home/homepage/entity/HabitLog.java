@@ -26,7 +26,7 @@ import java.util.Calendar;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@Table(name = "habitLog")
+@Table(name = "habit_log")
 @Entity
 public class HabitLog {
     @Id

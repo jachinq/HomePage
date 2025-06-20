@@ -26,7 +26,7 @@ import java.util.Calendar;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-@Table(name = "appSet")
+@Table(name = "app_set")
 @Entity
 public class AppSet {
     @Id
