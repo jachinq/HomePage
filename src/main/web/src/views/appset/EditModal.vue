@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import {
-  TransitionRoot,
-  TransitionChild,
   Dialog,
   DialogPanel,
   DialogTitle,
@@ -137,7 +135,9 @@ const deleteBtnText = ref("删除")
                 placeholder="当前分类">
             </div>
             <div class="space-y-4 mt-4">
-              <label for="name" class="block text-sm font-bold text-gray-400">图标</label>
+              <label for="name" class="block text-sm font-bold text-gray-400">图标
+                 <a href="https://www.iconfont.cn/" class="text-blue-400 hover:text-blue-500" target="_blank">更多svg</a>
+                </label>
               <input v-model="formData.icon" type="text" id="name"
                 class="px-4 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="应用图标">

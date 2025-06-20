@@ -106,7 +106,7 @@ export default {
 </script>
 
 <template>
-  <div class="min-h-full min-w-full flex flex-col px-16 relativize">
+  <div class="min-h-[calc(100vh-140px)] min-w-full flex flex-col items-center justify-center px-16 relativize">
     <!--    <div class="absolute top-0 left-0 right-0 z-10 flex justify-between items-center">-->
     <!--      <div v-if="state.isLogin">-->
     <!--        <div class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 cursor-pointer select-none" @click="routeTo('/app')">-->

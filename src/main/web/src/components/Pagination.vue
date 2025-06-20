@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center items-center w-full h-full gap-2">
+  <div class="flex items-center gap-2">
     <button 
       class="px-2 py-1 rounded-md text-sm font-medium leading-5 text-gray-400 bg-gray-600 border border-gray-500 cursor-pointer hover:bg-gray-800 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-600 active:text-gray-400 transition ease-in-out duration-150 disabled:cursor-not-allowed"
       :disabled="currentPage === 1"
