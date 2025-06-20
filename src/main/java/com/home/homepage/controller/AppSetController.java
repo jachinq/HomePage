@@ -1,10 +1,9 @@
 package com.home.homepage.controller;
 
 import com.home.homepage.entity.AppSet;
-import com.home.homepage.entity.User;
 import com.home.homepage.entity.modal.AppSetListModal;
 import com.home.homepage.service.AppSetService;
-import com.home.homepage.utils.RequestContext;
+import com.home.homepage.utils.Core;
 import com.home.homepage.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +31,7 @@ public class AppSetController {
 
     @PostMapping("/save")
     public Result create(@RequestBody AppSet dto){
-        User user = RequestContext.getUser();
-        if (user == null) {
-            return Result.error(401, "Unauthorized");
-        }
-        dto.setUserId(user.getId());
+        dto.setUserId(Core.getUser().getId());
         return appSetService.save(dto);
     }
 
@@ -47,11 +42,7 @@ public class AppSetController {
 
     @GetMapping("/list")
     public Result list(AppSetListModal dto){
-        User user = RequestContext.getUser();
-        if (user == null) {
-            return Result.error(401, "Unauthorized");
-        }
-        dto.setUserId(user.getId());
+        dto.setUserId(Core.getUser().getId());
         return appSetService.list(dto);
     }
 

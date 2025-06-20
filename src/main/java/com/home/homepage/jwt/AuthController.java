@@ -3,6 +3,7 @@ package com.home.homepage.jwt;
 import com.home.homepage.entity.User;
 import com.home.homepage.service.UserService;
 import com.home.homepage.utils.Result;
+import io.jsonwebtoken.JwtException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -77,15 +78,17 @@ public class AuthController {
     @PostMapping("/validate")
     @SneakyThrows
     public Result validate(@RequestBody AuthResponse authResponse) {
-        Thread.sleep(3 * 1000); // 模拟延迟
         String token = authResponse.getToken();
-        String username = jwtUtil.extractUsername(token);
-        User user = userService.loadUserByUsername(username);
-        if (user != null && jwtUtil.validateToken(token, user)) {
-            return Result.success(user);
-        }else {
-            return Result.error(401, "token 失效，请重新登录");
+        try {
+            String username = jwtUtil.extractUsername(token);
+            User user = userService.loadUserByUsername(username);
+            if (user != null && jwtUtil.validateToken(token, user)) {
+                return Result.success();
+            }
+        } catch (Exception ignored) {
+//            throw new Exception("token is invalid. token=" + token);
         }
+        return Result.error(401, "token 失效，请重新登录");
     }
 
     @Data

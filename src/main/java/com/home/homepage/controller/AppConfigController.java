@@ -4,17 +4,15 @@ import com.home.homepage.entity.AppConfig;
 import com.home.homepage.entity.modal.ListModal;
 import com.home.homepage.service.AppConfigService;
 import com.home.homepage.utils.Result;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Jachin
  * @since 25-06-13 17:06
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/appConfig")
 public class AppConfigController {
@@ -26,24 +24,15 @@ public class AppConfigController {
         this.appConfigService = appSetService;
     }
 
-    @PostMapping("/add")
-    public Result create(@RequestBody AppConfig dto){
+    @PostMapping("/save")
+    public Result save(@RequestBody AppConfig dto){
         return appConfigService.save(dto);
     }
 
-    @PostMapping("/update")
-    public Result update(@RequestBody AppConfig dto){
-        return appConfigService.update(dto);
-    }
-
-    @PostMapping("/delete")
-    public Result delete(@RequestBody AppConfig dto){
-        return appConfigService.delete(dto);
-    }
-
-    @GetMapping("/list")
-    public Result list(ListModal dto){
-        return appConfigService.list(dto);
+    @GetMapping("/info")
+    public Result info(){
+        log.info("start get info");
+        return appConfigService.info();
     }
 
 }

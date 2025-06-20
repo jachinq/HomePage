@@ -3,7 +3,7 @@ package com.home.homepage.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.home.homepage.entity.User;
 import com.home.homepage.service.UserService;
-import com.home.homepage.utils.RequestContext;
+import com.home.homepage.utils.Core;
 import com.home.homepage.utils.Result;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -91,7 +91,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     // 将认证信息设置到SecurityContext
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    RequestContext.setUser(userDetails);
+                    Core.setUser(userDetails);
                 } else {
                     sendErrorResponse(response, 401, "Invalid token", "Token is invalid or expired");
                 }

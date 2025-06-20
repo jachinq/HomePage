@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AppConfigRepository extends JpaRepository<AppConfig, Long> {
+    AppConfig findByUserId(Long userId);
 }
