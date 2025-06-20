@@ -81,7 +81,7 @@ public class AuthController {
         String token = authResponse.getToken();
         String username = jwtUtil.extractUsername(token);
         User user = userService.loadUserByUsername(username);
-        if (jwtUtil.validateToken(token, user)) {
+        if (user != null && jwtUtil.validateToken(token, user)) {
             return Result.success(user);
         }else {
             return Result.error(401, "token 失效，请重新登录");

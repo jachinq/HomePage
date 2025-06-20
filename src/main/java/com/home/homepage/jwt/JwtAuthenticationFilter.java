@@ -80,7 +80,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 User userDetails = userService.loadUserByUsername(username);
                 
                 // 验证令牌
-                if (jwtUtil.validateToken(token, userDetails)) {
+                if (userDetails != null && jwtUtil.validateToken(token, userDetails)) {
                     // 创建认证令牌
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
