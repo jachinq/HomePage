@@ -26,6 +26,6 @@ public class GenericExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Result handleException(Exception ex, WebRequest request) {
         log.error("{}; {}", getPath(request), ex.getMessage(), ex);
-        return Result.error(500, "系统异常");
+        return Result.error(500, "系统异常。" + ex.getMessage());
     }
 }

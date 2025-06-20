@@ -5,6 +5,8 @@ import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -41,4 +43,17 @@ public class SpecificExceptionHandler {
         return Result.error(500, "数据库异常");
     }
 
+    // 请求方式异常
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public Result handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex, WebRequest request) {
+        log.error("{}; {}", getPath(request), ex.getMessage(), ex);
+        return Result.error(400, "请求方法错误" + ex.getMessage());
+    }
+
+    // 请求头类型异常
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public Result HttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex, WebRequest request) {
+        log.error("{}; {}", getPath(request), ex.getMessage(), ex);
+        return Result.error(400, "请求类型不支持" + ex.getMessage());
+    }
 }
