@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-[100vh] p-16">
+  <div class="min-h-[100vh] px-16 py-4">
 <!--    <div class="flex flex-col items-center justify-center">-->
 <!--      <button class="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="getList">getList</button>-->
 <!--      <button class="bg-blue-500 hover:cursor-pointer hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="addSex">addSex</button>-->
