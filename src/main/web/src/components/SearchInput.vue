@@ -1,9 +1,11 @@
 <template>
   <div class="relative">
-    <input
+<input
       type="text"
       v-model="searchQuery"
       @input="handleSearch()"
+      @compositionstart="handleCompositionStart"
+      @compositionend="handleCompositionEnd"
       @keydown="handleKeyDown"
       placeholder="搜索..."
       class="group w-full px-4 py-2 text-gray-400 bg-gray-800 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
@@ -45,14 +47,26 @@ defineProps({
 })
 
 const searchQuery = ref('')
+const isComposing = ref(false)
 
 const emit = defineEmits(['search', 'enter', 'keydown'])
+
+const handleCompositionStart = () => {
+  isComposing.value = true
+}
+
+const handleCompositionEnd = () => {
+  isComposing.value = false
+  handleSearch()
+}
 
 const handleSearch = (clear: boolean = false) => {
   if (clear) {
     searchQuery.value = ''
   }
-  emit('search', searchQuery.value)
+  if (!isComposing.value) {
+    emit('search', searchQuery.value)
+  }
 }
 const handleEnter = () => {
     emit('enter', searchQuery.value)
