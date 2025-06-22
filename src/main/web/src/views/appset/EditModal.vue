@@ -87,7 +87,7 @@ const deleteBtnText = ref("删除")
 <template>
   <Dialog :open="props.openModal" @close="handleOpenModalChange({ open: false })" class="relative z-50">
     <div class="fixed inset-0 flex w-screen items-center justify-center p-4 bg-slate-900/80">
-      <DialogPanel class="p-8 w-full max-w-sm rounded-lg bg-gray-800">
+      <DialogPanel class="p-8 w-full max-w-lg rounded-lg bg-gray-800">
         <DialogTitle>应用</DialogTitle>
         <DialogDescription>
           <form>
