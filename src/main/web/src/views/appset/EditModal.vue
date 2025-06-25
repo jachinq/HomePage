@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  DialogDescription, RadioGroup, RadioGroupOption,
-} from '@headlessui/vue'
-import { saveAppSet, deleteAppSet } from "../../api/appSetApi.ts";
-import { getCurrentInstance } from "vue";
+import {ref, watch} from 'vue'
+import {saveAppSet, deleteAppSet} from "../../api/appSetApi";
+import FormItem from "../../components/form/FormItem.vue";
+import FormInput from "../../components/form/FormInput.vue";
+import SaveModal from "../../components/SaveModal.vue";
+import FormRadio from "../../components/form/FormRadio.vue";
+import {useToast} from "@/components/toast";
 
-const context = getCurrentInstance()?.appContext.config.globalProperties;
-const toast = context?.$toast;
+const toast = useToast();
 
 const defaultFormData = {
   type: 1,
@@ -18,19 +15,19 @@ const defaultFormData = {
   description: '',
   port: '',
   category: '',
-  innerUrl: '',
   outerUrl: '',
 }
 
 
 const props = defineProps<{
-  openModal: boolean,
+  openModal: {
+    add: boolean,
+    set: boolean
+  },
   oldData: any,
 }>()
-const emit = defineEmits<{
-  (e: 'close', { }): void
-}>()
-const handleOpenModalChange = (value: any) => {
+const emit = defineEmits(['close'])
+const handleClose = (value: any) => {
   emit('close', value)
 }
 
@@ -46,134 +43,63 @@ const submitForm = async () => {
   let result = await saveAppSet(formData.value);
   if (result.success) {
     toast?.success(result.message);
-    handleOpenModalChange({
-      open: false,
-      success: true,
-    });
+    handleClose(true);
   } else {
     toast?.error(result.message);
   }
 }
 
 const del = async () => {
-  if (!confirmDelete.value) {
-    confirmDelete.value = true;
-    deleteBtnText.value = "确认删除";
-    setTimeout(() => {
-      confirmDelete.value = false;
-      deleteBtnText.value = "删除";
-    }, 3000); // 3秒后恢复
-    return;
-  }
   if ((await deleteAppSet(formData.value)).success) {
     toast?.success("删除成功✌️")
-    handleOpenModalChange({
-      open: false,
-      success: true,
-    });
+    handleClose(true);
   }
 }
 
 // 监测oldData变化
 watch(props, (newVal, _) => {
-  formData.value = { ...newVal.oldData }
+  formData.value = {...newVal.oldData}
 })
 
-const formData = ref(props.oldData ? { ...props.oldData } : { ...defaultFormData })
-const confirmDelete = ref(false)
-const deleteBtnText = ref("删除")
+const formData = ref(props.oldData ? {...props.oldData} : {...defaultFormData})
+const options = [{value: 2, name: '应用'}, {value: 3, name: '书签'}];
 </script>
 
 <template>
-  <Dialog :open="props.openModal" @close="handleOpenModalChange({ open: false })" class="relative z-50">
-    <div class="fixed inset-0 flex w-screen items-center justify-center p-4 bg-slate-900/80">
-      <DialogPanel class="p-8 w-full max-w-lg rounded-lg bg-gray-800">
-        <DialogTitle>应用</DialogTitle>
-        <DialogDescription>
-          <form>
-            <div class="space-y-4 mt-4">
-              <label for="name" class="block text-sm font-bold text-gray-400">类型</label>
-              <RadioGroup class="space-x-4 flex flex-row" :default-value="formData.type" v-model="formData.type" name="type">
-                <RadioGroupOption v-slot="{ checked }" :value="1" class="cursor-pointer">
-                  <div class="flex items-center space-x-2 text-sm">
-                    <span class="rounded-full w-4 h-4 flex items-center justify-center border-2 border border-gray-600"
-                      :class="checked ? 'bg-blue-600' : 'bg-gray-600'"></span>
-                    <span :class="!checked ? 'text-gray-400' : 'text-blue-500'">应用</span>
-                  </div>
-                </RadioGroupOption>
-                <RadioGroupOption v-slot="{ checked }" :value="2" class="cursor-pointer">
-                  <div class="flex items-center space-x-2 text-sm">
-                    <span class="rounded-full w-4 h-4 flex items-center justify-center border-2 border border-gray-600"
-                      :class="checked ? 'bg-blue-600' : 'bg-gray-600'"></span>
-                    <span :class="!checked ? 'text-gray-400' : 'text-blue-500'">书签</span>
-                  </div>
-                </RadioGroupOption>
-              </RadioGroup>
-            </div>
-            <div class="space-y-4 mt-4">
-              <label for="name" class="block text-sm font-bold text-gray-400">名称</label>
-              <input v-model="formData.name" type="text" id="name"
-                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="应用名称">
-            </div>
-            <div class="space-y-4 mt-4">
-              <label for="description" class="block text-sm font-bold text-gray-400">描述</label>
-              <textarea v-model="formData.description" id="description"
-                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                rows="2" scroll-behavior="smooth" placeholder="应用描述"></textarea>
-            </div>
-            <div class="space-y-4 mt-4">
-              <label for="name" class="block text-sm font-bold text-gray-400">端口号</label>
-              <input v-model="formData.port" type="text" id="name"
-                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="使用的端口号">
-            </div>
-            <div class="space-y-4 mt-4">
-              <label for="name" class="block text-sm font-bold text-gray-400">分类</label>
-              <input v-model="formData.category" type="text" id="name"
-                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="当前分类">
-            </div>
-            <div class="space-y-4 mt-4">
-              <label for="name" class="block text-sm font-bold text-gray-400">图标
-                 <a href="https://www.iconfont.cn/" class="text-blue-400 hover:text-blue-500" target="_blank">更多svg</a>
-                </label>
-              <input v-model="formData.icon" type="text" id="name"
-                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="应用图标">
-            </div>
-            <div class="space-y-4 mt-4">
-              <label for="name" class="block text-sm font-bold text-gray-400">外网地址</label>
-              <input v-model="formData.outerUrl" type="text" id="name"
-                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="在外网时的访问地址">
-            </div>
-          </form>
-        </DialogDescription>
-        <div class="mt-4">
-          <button type="button"
-            class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-200 bg-blue-400 border border-transparent rounded-md hover:bg-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-            @click="submitForm">
-            保存
-          </button>
-          <button type="button"
-            class="ml-3 inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-400 bg-slate-600 border border-transparent rounded-md hover:bg-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-            @click="handleOpenModalChange({ open: false })">
-            取消
-          </button>
-          <button type="button"
-            class="ml-3 inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-400 bg-slate-600 border border-transparent rounded-md hover:bg-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-            @click="formData = { ...defaultFormData }">
-            重置
-          </button>
-          <button v-if="props.oldData"
-            class=" bg-red-800 rounded-md px-4 py-2 text-sm text-gray-400 hover:bg-red-700 mx-2" @click="del">
-            {{ deleteBtnText }}
-          </button>
-        </div>
-      </DialogPanel>
-    </div>
-  </Dialog>
+  <SaveModal name="应用"
+             :open-modal="props.openModal"
+             :default-data="defaultFormData"
+             @on-close="handleClose"
+             @on-delete="del"
+             @on-submit="submitForm"
+  >
+    <template #form>
+      <FormItem label="类型">
+        <FormRadio :options="options" v-model="formData.type"/>
+      </FormItem>
+      <FormItem label="名称">
+        <FormInput v-model="formData.name" placeholder="用用名称"/>
+      </FormItem>
+      <FormItem label="描述">
+        <FormInput type="textarea" v-model="formData.description" placeholder="应用描述"/>
+      </FormItem>
+      <FormItem label="端口号">
+        <FormInput v-model="formData.port" placeholder="内部应用使用的端口"/>
+      </FormItem>
+      <FormItem label="分类">
+        <FormInput v-model="formData.category" placeholder="书签的分类"/>
+      </FormItem>
+      <FormItem label="图标">
+        <template #label>
+          <label for="name" class="block text-sm font-bold text-gray-400">图标
+            <a href="https://www.iconfont.cn/" class="text-blue-400 hover:text-blue-500" target="_blank">更多svg</a>
+          </label>
+        </template>
+        <FormInput v-model="formData.icon" placeholder="支持svg图标"/>
+      </FormItem>
+      <FormItem label="外网地址">
+        <FormInput v-model="formData.outerUrl" placeholder="在外网时的访问地址"/>
+      </FormItem>
+    </template>
+  </SaveModal>
 </template>
-
-<style scoped></style>

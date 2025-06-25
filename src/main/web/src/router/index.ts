@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import AppSet from '../views/AppSet.vue'
+import AppSet from '../views/appset/AppSet.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Habit from '../views/habit/Habit.vue'

@@ -3,7 +3,14 @@ import {reactive} from 'vue'
 import {validate} from "../api/AuthApi.ts";
 import storage from "../utils/storage.ts";
 
-const state = reactive({
+interface User {
+    avatarUrl: string
+}
+
+const state = reactive<{
+    user: User | null,
+    isLogin: boolean
+}>({
     user: null,
     isLogin: false
 })
@@ -28,7 +35,7 @@ const validateToken = async () => {
 validateToken();
 
 export function useUserStore() {
-    function login(userData: any) {
+    function login(userData: User) {
         state.user = userData
         state.isLogin = true
     }

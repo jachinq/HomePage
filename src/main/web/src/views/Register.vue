@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import {register} from "../api/AuthApi.js";
+import {register} from "@/api/AuthApi.js";
 import { getCurrentInstance } from "vue";
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;

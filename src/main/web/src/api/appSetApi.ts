@@ -1,5 +1,5 @@
-import FetchUtil from "../utils/fetchUtil.ts";
-import {Result} from "../utils/entity.ts";
+import FetchUtil from "../utils/fetchUtil";
+import {Result} from "../utils/entity";
 
 export function getAppSetList(data: any): Promise<Result> {
 
@@ -26,4 +26,4 @@ export function deleteAppSet(data: any): Promise<Result> {
             .then(data => resolve(data))
             .catch(err => reject(err))
     );
-}
+} 

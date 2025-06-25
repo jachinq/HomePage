@@ -9,7 +9,7 @@ import {
   DialogDescription,
   Switch,
 } from '@headlessui/vue'
-import { saveAppConfig, getAppConfig } from "../../api/appConfigApi";
+import { saveAppConfig, getAppConfig } from "@/api/appConfigApi.ts";
 import { getCurrentInstance } from "vue";
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;

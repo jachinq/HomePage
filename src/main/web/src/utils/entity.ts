@@ -4,4 +4,8 @@ export interface Result {
     success: boolean;
     total: number;
     data: any;
+    page: {
+        total: number;
+        totalPages: number;
+    }
 }
