@@ -1,5 +1,6 @@
 package com.home.homepage.entity;
 
+import com.home.homepage.utils.PinyinUtil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,16 +39,26 @@ public class AppSet {
     private Integer port; // 端口号
     private String name;
     private String description;
-    private String cover; // 封面
+    private String pinyin; // name + description 的拼音，用于快速查询
     private String icon; // 图标
-    private String background; // 背景图
-    private String tags; // 标签
     private String category; // 分类
-    private String innerUrl; // 内网链接
     private String outerUrl; // 外网链接
 
     @CreationTimestamp
     private Calendar createTime;
     @UpdateTimestamp
     private Calendar updateTime;
+
+    public String generatePinyin() {
+        String name = this.getName();
+        String description = this.getDescription();
+        String pinyin = "";
+        try {
+            pinyin += PinyinUtil.generate(name);
+            pinyin += PinyinUtil.generate(description);
+        } catch (Exception e) {
+            System.out.println("parse error;name=" + name);
+        }
+        return pinyin.replaceAll(" ", "");
+    }
 }

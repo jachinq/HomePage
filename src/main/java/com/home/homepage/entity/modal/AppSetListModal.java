@@ -3,6 +3,7 @@ package com.home.homepage.entity.modal;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 /**
  * @author Jachin
@@ -10,8 +11,9 @@ import lombok.ToString;
  */
 @Data
 @ToString
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 public class AppSetListModal extends ListModal{
     private String name;
-    private Long userId;
+    private Integer type = -1;
 }

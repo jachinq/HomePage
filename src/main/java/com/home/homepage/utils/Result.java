@@ -20,6 +20,16 @@ public class Result {
     private String message;
     private Boolean success;
     private Object data;
+    private Page page;
+
+    @Data
+    @ToString
+    @AllArgsConstructor
+    public static class Page {
+        private Long total;
+        private Integer totalPages;
+
+    }
 
     public static Result success() {
         return success("success");
@@ -39,6 +49,11 @@ public class Result {
         result.setMessage(msg);
         result.setData(data);
         result.setSuccess(true);
+        return result;
+    }
+    public static <T> Result success(org.springframework.data.domain.Page<T> page) {
+        Result result = Result.success(page.toList());
+        result.setPage(new Page(page.getTotalElements(), page.getTotalPages()));
         return result;
     }
 

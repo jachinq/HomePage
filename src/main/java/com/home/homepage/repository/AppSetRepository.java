@@ -16,8 +16,11 @@ import org.springframework.stereotype.Repository;
 public interface AppSetRepository extends JpaRepository<AppSet, Long> {
 //    public Page<AppSet> findByUserIdAndNameIsContainingOrDescriptionIsContaining(Long userId, String dtoName, String dtoDescription, Pageable pageable);
 
-    Page<AppSet> findByUserId(Long userId, Pageable pageable);
+    @Query("SELECT u FROM AppSet u WHERE u.userId = :userId AND u.type = :type AND u.pinyin LIKE %:keyword%")
+    Page<AppSet> findByKeyword(@Param("userId") Long userId,
+                               @Param("type") Integer type,
+                               @Param("keyword") String keyword,
+                               Pageable pageable);
 
-    @Query("SELECT u FROM AppSet u WHERE u.userId = :userId AND (u.name LIKE %:keyword% OR u.description LIKE %:keyword%)")
-    Page<AppSet> findByUserIdAndNameIsContainingOrDescriptionIsContaining(@Param("userId") Long userId, @Param("keyword") String keyword, Pageable pageable);
+    Page<AppSet> findByUserIdAndType(Long uid, Integer type, Pageable pageable);
 }

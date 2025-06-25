@@ -3,7 +3,10 @@ package com.home.homepage.service;
 import com.home.homepage.entity.AppSet;
 import com.home.homepage.entity.modal.AppSetListModal;
 import com.home.homepage.repository.AppSetRepository;
+import com.home.homepage.utils.Core;
+import com.home.homepage.utils.PinyinUtil;
 import com.home.homepage.utils.Result;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +28,7 @@ public class AppSetService {
 
     public Result save(AppSet sexDaily) {
         AppSet save = appSetRepository.save(sexDaily);
+        save.setPinyin(save.generatePinyin());
         System.out.println(save);
         return Result.success(save);
     }
@@ -39,15 +43,15 @@ public class AppSetService {
         return Result.success(dto);
     }
 
+    @SneakyThrows
     public Result list(AppSetListModal dto) {
         Pageable pageable = dto.getPageable();
         Page<AppSet> all;
         if (dto.getName() != null) {
-            all = appSetRepository.findByUserIdAndNameIsContainingOrDescriptionIsContaining(dto.getUserId(), dto.getName(), pageable);
+            all = appSetRepository.findByKeyword(Core.getUid(), dto.getType(), PinyinUtil.generate(dto.getName()), pageable);
         } else {
-            all = appSetRepository.findByUserId(dto.getUserId(), pageable);
+            all = appSetRepository.findByUserIdAndType(Core.getUid(), dto.getType(), pageable);
         }
-
         return Result.success(all);
     }
 }

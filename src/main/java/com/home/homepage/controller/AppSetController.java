@@ -4,6 +4,7 @@ import com.home.homepage.entity.AppSet;
 import com.home.homepage.entity.modal.AppSetListModal;
 import com.home.homepage.service.AppSetService;
 import com.home.homepage.utils.Core;
+import com.home.homepage.utils.PinyinUtil;
 import com.home.homepage.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,6 @@ public class AppSetController {
 
     @GetMapping("/list")
     public Result list(AppSetListModal dto){
-        dto.setUserId(Core.getUser().getId());
         return appSetService.list(dto);
     }
-
 }

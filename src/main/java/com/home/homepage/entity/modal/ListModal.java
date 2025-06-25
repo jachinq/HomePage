@@ -19,8 +19,11 @@ public class ListModal {
     private Boolean desc = true;    // 排序方式
 
     public Pageable getPageable() {
-        Integer pageNum = getPageNum();
         Integer pageSize = getPageSize();
+        if (pageSize == null || pageSize <= 0) {
+            return null;
+        }
+        Integer pageNum = getPageNum();
         String sort = getSort();
         boolean desc = getDesc();
         Sort.Direction sortDirection = Sort.Direction.ASC;
