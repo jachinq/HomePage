@@ -32,10 +32,12 @@ public class Habit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer userId;
+    private Long userId;
     private String name;
     private String description;
-    private String frequency; // 频率
+    private String doneIcon;
+    private String failIcon;
+    private Integer frequency; // 频率, 单位:天，-1为禁用频率
 
     private String startDate; // 开始日期
     private String endDate; // 结束日期

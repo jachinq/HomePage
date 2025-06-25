@@ -7,7 +7,6 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.Calendar;
 
 /**
@@ -42,10 +41,10 @@ public class AppConfig {
 
     @ToString.Include
     private String creatTime() {
-        return CalendarUtil.format(createTime);
+        return CalendarUtil.dateTimeFormat(createTime);
     }
     @ToString.Include
     private String updateTime() {
-        return CalendarUtil.format(updateTime);
+        return CalendarUtil.dateTimeFormat(updateTime);
     }
 }

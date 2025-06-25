@@ -37,13 +37,12 @@ const submitForm = async () => {
   console.log(formData.value)
   let result = await saveAppConfig(formData.value);
   if (result.success) {
-    toast?.success(result.msg);
+    toast?.success(result.message);
     handleOpenModalChange({
       open: false,
       success: true,
     });
-  } else {
-    toast?.error(result.msg);
+    toast?.error(result.message);
   }
 }
 
@@ -55,7 +54,7 @@ watch(props, async (value) => {
     if (result.success) {
       formData.value = result.data;
     } else {
-      toast.error(result.msg);
+      toast.error(result.message);
       handleOpenModalChange({
         open: false,
         success: false,

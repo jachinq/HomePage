@@ -13,7 +13,10 @@ function procUrl(url: string): string {
 }
 
 // 请求头附带token处理
-function procHeaders(headers: any = {}) {
+function procHeaders(url: string, headers: any = {}) {
+    if (url.startsWith('/api/auth')) {
+        return headers;
+    }
     const token = storage.getItem('token');
     if (token) {
         headers.Authorization = `Bearer ${token}`;
@@ -30,7 +33,7 @@ export default {
         }
         return fetch(procUrl(url), {
             method: 'GET',
-            headers: procHeaders(headers),
+            headers: {...procHeaders(url, headers)},
         });
     },
 
@@ -39,7 +42,7 @@ export default {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...procHeaders(headers),
+                ...procHeaders(url, headers),
             },
             body: JSON.stringify(data),
         });

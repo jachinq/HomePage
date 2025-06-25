@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Result {
     private int code;
-    private String msg;
+    private String message;
     private Boolean success;
     private Object data;
 
@@ -36,7 +36,7 @@ public class Result {
     public static Result success(String msg, Object data) {
         Result result = new Result();
         result.setCode(200);
-        result.setMsg(msg);
+        result.setMessage(msg);
         result.setData(data);
         result.setSuccess(true);
         return result;
@@ -45,7 +45,7 @@ public class Result {
     public static Result error(int code, String msg) {
         Result result = new Result();
         result.setCode(code);
-        result.setMsg(msg);
+        result.setMessage(msg);
         result.setSuccess(false);
         return result;
     }

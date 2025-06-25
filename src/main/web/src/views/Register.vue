@@ -21,7 +21,7 @@ const handleRegister = async () => {
     password: password.value
   });
   if (!result.success) {
-    toast.error(result.msg)
+    toast.error(result.message)
     return
   }
   // 注册成功，返回登录页面

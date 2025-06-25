@@ -1,24 +1,28 @@
 <script setup lang="ts">
 
 import {ref, withDefaults, defineProps, defineEmits} from 'vue';
+import {HabitEntity, HabitLogEntity} from "../interface/habit.ts";
 
 interface DateProp {
-  number: Number,
-  date: String,
-  isToday?: Boolean
+  number: number,
+  date: string,
+  isToday?: boolean
+  habit?: HabitEntity
+  log?: HabitLogEntity
 }
 
 const props = withDefaults(defineProps<{
-  month?: Number,
-  year?: Number,
+  month?: number,
+  year?: number,
+  logs?: any[],
 }>(), {
-  month: new Date().getMonth() + 1,
-  year: new Date().getFullYear(),
+  month: () => new Date().getMonth() + 1,
+  year: () => new Date().getFullYear(),
 });
 
 const daysOfWeek = ['一', '二', '三', '四', '五', '六', '日'];
-const month = ref(props.month); // Default to current month
-const year = ref(props.year); // Default to current year
+const month = ref<number>(props.month || new Date().getMonth() + 1); // Default to current month
+const year = ref<number>(props.year || new Date().getFullYear()); // Default to current year
 
 const dates = ref(() => {
   const today = new Date().toISOString().split('T')[0];
@@ -34,19 +38,24 @@ const dates = ref(() => {
 
   // Fill empty cells before the first day of the month
   for (let i = 1; i < startDay; i++) {
-    dates.push({number: '', date: ''});
+    dates.push({number: -1, date: ''});
   }
+
+  const map: { [key: string]: any } = {}
+  props.logs?.forEach(log => map[log.date] = log);
 
   // Fill cells with dates
   for (let date = 1; date <= endDate.getDate(); date++) {
     const currentDate = new Date(year.value, month.value - 1, date + 1).toISOString().split('T')[0];
+    const log = map[currentDate];
     dates.push({
       number: date,
       date: currentDate,
       isToday: today === currentDate,
+      log
     });
   }
-  console.log('Generated dates array:', dates);
+  console.log('Generated dates array:', dates, map);
   return dates;
 });
 
@@ -91,10 +100,10 @@ const handleDate = (date: DateProp) => {
 
       <!-- Dates -->
       <div v-for="date in dates()" :key="date.date" class="text-center flex justify-center">
-        <div class="border border-gray-700 rounded-sm p-2 w-20 h-20"
-             :class="{ 'bg-sky-800 border-0': date.isToday }">
-          <div class="cursor-pointer hover:text-sky-400" @click="handleDate(date)">
-            {{ date.number }}
+        <div class="group cursor-pointer border border-gray-700 rounded-sm p-2 w-20 h-20"
+             :class="{ 'bg-sky-800 border-0': date.isToday }" @click="handleDate(date)">
+          <div class="group-hover:text-sky-400">
+            {{ date.number > 0 ? date.number : '' }}
           </div>
           <div class="min-w-8 min-h-8 text-center">
             <slot :date="date"></slot>

@@ -1,82 +1,113 @@
 <script setup lang="ts">
-import Calendar from '../../components/Calendar.vue';
+import HabitCalendar from '../../components/HabitCalendar.vue';
 import Loading from "../../components/Loading.vue";
-import {ref} from 'vue';
+import {getCurrentInstance, ref} from 'vue';
 import Tooltips from "../../components/Tooltips.vue";
-import EditHabitModal from "./EditModal.vue";
+import EditHabitModal from "./EditHabitModal.vue";
+import EditHabitLogModal from "./EditHabitLogModal.vue";
+import {HabitEntity, HabitLogEntity} from "../../interface/habit.ts";
+import {getHabitList, getHabitLogList} from "../../api/habitApi.ts";
+import BackToHome from "../../components/BackToHome.vue";
 
-interface Habit {
-  id: number;
-  name: string;
-  description: string;
-  doneIcon?: String,
-  failIcon?: String,
-}
+const context = getCurrentInstance()?.appContext.config.globalProperties;
+const toast = context?.$toast;
 
-interface HabitLog {
-  habitId: number;
-  date: string;
-  icon: string;
-}
-
-const habits = ref<Habit[]>([
-  {id: 1, name: 'Test 1', description: 'this is description for Test 1'},
-  {id: 2, name: 'Test 2', description: 'this is description for Test 2'},
-  {id: 3, name: 'Test 3', description: 'this is description for Test 3'}
-]);
+const habits = ref<HabitEntity[]>([]);
 const loading = ref(false);
-const activeHabit = ref<Habit | null>(habits.value?.length > 0 ? habits.value[0] : null);
-const habitLogs = ref<HabitLog[]>([]);
-const openHabitModal = ref(false);
+const activeHabit = ref<HabitEntity | any>({});
+const activeHabitLog = ref({});
+const habitLogs = ref<HabitLogEntity[]>([]);
+const openHabitModal = ref({add: false, set: false});
+const openHabitLogModal = ref({add: false, set: false});
+
+const fetchHabits = async () => {
+  loading.value = true;
+  const result = await getHabitList({});
+  if (result.success) {
+    habits.value = result.data
+    if (habits.value && habits.value.length > 0) {
+      activeHabit.value = habits.value[0];
+      fetchHabitLogs();
+    }
+  } else {
+    toast.error(result.message)
+  }
+  loading.value = false;
+}
 
 const fetchHabitLogs = async () => {
   loading.value = true;
-  const logs = [
-      {habitId: 1, date: '2025-06-23', icon: '✅'},
-      {habitId: 2, date: '2025-06-24', icon: '❌'},
-      {habitId: 2, date: '2025-06-05', icon: '✅'},
-      {habitId: 3, date: '2025-06-09', icon: '❌'},
-      {habitId: 3, date: '2025-06-11', icon: '❌'},
-      {habitId: 3, date: '2025-06-15', icon: '❌'},
-    ];
-  await new Promise(resolve => setTimeout(() => {
-    loading.value = false
-    habitLogs.value = logs.filter(log => log.habitId === activeHabit.value?.id);
-  }, 200));
+  const result = await getHabitLogList({
+    habitId: activeHabit.value.id,
+  });
+  if (result.success) {
+    habitLogs.value = result.data
+  } else {
+    toast.error(result.message)
+  }
+  loading.value = false;
 }
 
-const handleChangeHabit = (habit: Habit) => {
-  activeHabit.value = habit
-  loading.value = true
-  setTimeout(() => {
-    loading.value = false;
-  }, 300);
+const handelEditHabitModelClose = (success: any) => {
+  openHabitModal.value = {add: false, set: false}
+  if (success === true) {
+    fetchHabits()
+  }
+}
+const handelEditHabitLogModelClose = (success: any) => {
+  openHabitLogModal.value = {add: false, set: false}
+  if (success === true) {
+    fetchHabitLogs()
+  }
+}
 
+const handleChangeHabit = (habit: HabitEntity) => {
+  if (activeHabit.value.id == habit.id) return
+  activeHabit.value = habit
   // 请求具体数据
   fetchHabitLogs();
 }
 
-const handleDateClick = (date: string) => {
-  console.log(date);
+const handleDateClick = (date: any) => {
+  if (!activeHabit.value?.id) {
+    toast.warn("先选择习惯再做记录")
+    return
+  }
+  activeHabitLog.value = date?.log;
+  if (activeHabitLog.value) {
+    openHabitLogModal.value = {add: false, set: true};
+  } else {
+    openHabitLogModal.value = {add: true, set: false};
+    activeHabitLog.value = {
+      date: date.date,
+      habitId: activeHabit.value.id
+    }
+  }
+
 }
-fetchHabitLogs();
+fetchHabits();
 </script>
 
 <template>
   <div class="flex flex-col w-full h-full">
 
+    <div class="flex justify-between mb-2">
+      <span class="text-2xl font-bold">习惯追踪</span>
+      <BackToHome/>
+    </div>
+
     <!-- Habit List for selection -->
     <div class="flex flex-row items-center gap-2">
       <div class="">
-        <button @click="openHabitModal = true"
-            class="bg-sky-600 hover:bg-sky-500 text-gray-200 font-bold px-2 rounded cursor-pointer">新增
+        <button @click="openHabitModal = {add: true, set: false}"
+                class="bg-sky-600 hover:bg-sky-500 text-gray-200 font-bold px-2 rounded cursor-pointer">新增
         </button>
       </div>
       <div v-for="habit in habits" class="">
-                <span class="text-xl font-bold cursor-pointer hover:text-sky-400"
-                      :class="{ 'text-sky-400': activeHabit === habit }" @click="handleChangeHabit(habit)">{{
-                    habit.name
-                  }}</span>
+        <span class="text-xl font-bold cursor-pointer hover:text-sky-400"
+              :class="{ 'text-sky-400': activeHabit === habit }" @click="handleChangeHabit(habit)">{{
+            habit.name
+          }}</span>
       </div>
     </div>
 
@@ -86,8 +117,8 @@ fetchHabitLogs();
         <div>
           <span class="text-lg">{{ activeHabit.description }}</span>
         </div>
-        <button @click="openHabitModal = true"
-            class="bg-sky-600 hover:bg-sky-500 text-gray-200 font-bold px-2 rounded cursor-pointer">Edit
+        <button @click="openHabitModal = {add: false, set: true}"
+                class="bg-sky-600 hover:bg-sky-500 text-gray-200 font-bold px-2 rounded cursor-pointer">Edit
         </button>
       </div>
     </div>
@@ -102,17 +133,23 @@ fetchHabitLogs();
 
     <!-- Calendar -->
     <div class="flex items-center justify-center w-full h-full">
-      <Calendar :year="2025" :month="6" v-slot="{ date }" @date-click="handleDateClick">
-        <div v-if="habitLogs?.find(log => log?.date === date?.date)">
-          <Tooltips text="123">
-            <span class="text-lg">{{ habitLogs?.find(log => log?.date === date?.date)?.icon }}</span>
+      <HabitCalendar :year="2025" :month="6" :habit="activeHabit" :logs="habitLogs" v-slot="{ date }"
+                     @date-click="handleDateClick">
+        <div v-if="date?.log">
+          <Tooltips :text="date.log?.extra || ''">
+            <span class="text-lg">{{ date.log?.done ? activeHabit?.doneIcon : activeHabit?.failIcon }}</span>
           </Tooltips>
         </div>
-      </Calendar>
+      </HabitCalendar>
     </div>
 
     <Loading :loading="loading"/>
 
-    <EditHabitModal :open-modal="openHabitModal" :oldData="activeHabit" @close="openHabitModal = false"/>
+    <EditHabitModal :open-modal="openHabitModal" :oldData="activeHabit" @close="handelEditHabitModelClose"/>
+    <EditHabitLogModal
+        :open-modal="openHabitLogModal"
+        :oldData="activeHabitLog"
+        :habit="activeHabit"
+        @close="handelEditHabitLogModelClose"/>
   </div>
 </template>

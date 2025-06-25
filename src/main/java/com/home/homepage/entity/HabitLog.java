@@ -1,5 +1,6 @@
 package com.home.homepage.entity;
 
+import com.home.homepage.utils.CalendarUtil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +13,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.processing.Exclude;
 
 import java.util.Calendar;
 
@@ -32,10 +34,12 @@ public class HabitLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Long userId;
     private Integer habitId;
-    private Integer userId;
+    private Boolean done;
     private Integer duration; // 持续时间，单位：s
     private String extra;
+    private String date;
 
     @CreationTimestamp
     private Calendar createTime;

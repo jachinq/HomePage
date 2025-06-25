@@ -27,7 +27,7 @@ export default {
         this.$toast.success('欢迎回来~' + userName)
         this.$router.push('/')
       } else {
-        this.$toast.error(result.msg)
+        this.$toast.error(result.message)
       }
     }
   },

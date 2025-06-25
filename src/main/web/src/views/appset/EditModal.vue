@@ -45,13 +45,13 @@ const submitForm = async () => {
   }
   let result = await saveAppSet(formData.value);
   if (result.success) {
-    toast?.success(result.msg);
+    toast?.success(result.message);
     handleOpenModalChange({
       open: false,
       success: true,
     });
   } else {
-    toast?.error(result.msg);
+    toast?.error(result.message);
   }
 }
 
@@ -96,14 +96,14 @@ const deleteBtnText = ref("删除")
               <RadioGroup class="space-x-4 flex flex-row" :default-value="formData.type" v-model="formData.type" name="type">
                 <RadioGroupOption v-slot="{ checked }" :value="1" class="cursor-pointer">
                   <div class="flex items-center space-x-2 text-sm">
-                    <span class="rounded-full w-4 h-4 flex items-center justify-center border-2 border-gray-300"
+                    <span class="rounded-full w-4 h-4 flex items-center justify-center border-2 border border-gray-600"
                       :class="checked ? 'bg-blue-600' : 'bg-gray-600'"></span>
                     <span :class="!checked ? 'text-gray-400' : 'text-blue-500'">应用</span>
                   </div>
                 </RadioGroupOption>
                 <RadioGroupOption v-slot="{ checked }" :value="2" class="cursor-pointer">
                   <div class="flex items-center space-x-2 text-sm">
-                    <span class="rounded-full w-4 h-4 flex items-center justify-center border-2 border-gray-300"
+                    <span class="rounded-full w-4 h-4 flex items-center justify-center border-2 border border-gray-600"
                       :class="checked ? 'bg-blue-600' : 'bg-gray-600'"></span>
                     <span :class="!checked ? 'text-gray-400' : 'text-blue-500'">书签</span>
                   </div>
@@ -113,25 +113,25 @@ const deleteBtnText = ref("删除")
             <div class="space-y-4 mt-4">
               <label for="name" class="block text-sm font-bold text-gray-400">名称</label>
               <input v-model="formData.name" type="text" id="name"
-                class="px-4 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="应用名称">
             </div>
             <div class="space-y-4 mt-4">
               <label for="description" class="block text-sm font-bold text-gray-400">描述</label>
               <textarea v-model="formData.description" id="description"
-                class="px-4 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 rows="2" scroll-behavior="smooth" placeholder="应用描述"></textarea>
             </div>
             <div class="space-y-4 mt-4">
               <label for="name" class="block text-sm font-bold text-gray-400">端口号</label>
               <input v-model="formData.port" type="text" id="name"
-                class="px-4 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="使用的端口号">
             </div>
             <div class="space-y-4 mt-4">
               <label for="name" class="block text-sm font-bold text-gray-400">分类</label>
               <input v-model="formData.category" type="text" id="name"
-                class="px-4 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="当前分类">
             </div>
             <div class="space-y-4 mt-4">
@@ -139,13 +139,13 @@ const deleteBtnText = ref("删除")
                  <a href="https://www.iconfont.cn/" class="text-blue-400 hover:text-blue-500" target="_blank">更多svg</a>
                 </label>
               <input v-model="formData.icon" type="text" id="name"
-                class="px-4 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="应用图标">
             </div>
             <div class="space-y-4 mt-4">
               <label for="name" class="block text-sm font-bold text-gray-400">外网地址</label>
               <input v-model="formData.outerUrl" type="text" id="name"
-                class="px-4 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                class="px-4 py-2 block w-full border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="在外网时的访问地址">
             </div>
           </form>

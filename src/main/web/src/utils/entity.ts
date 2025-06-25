@@ -1,6 +1,6 @@
 export interface Result {
     code: number;
-    msg: string;
+    message: string;
     success: boolean;
     total: number;
     data: any;

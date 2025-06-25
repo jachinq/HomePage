@@ -53,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-//        try {
+        try {
             // 放行 OPTIONS 请求
             if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
                 filterChain.doFilter(request, response);
@@ -97,9 +97,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
-//        } catch (Exception e) {
-//            sendErrorResponse(response, 401, e.getMessage(), "Invalid token");
-//        }
+        } catch (Exception e) {
+            sendErrorResponse(response, 401, e.getMessage(), "token is invalid or expired");
+        }
     }
 
     private void sendErrorResponse(HttpServletResponse response, int status,
