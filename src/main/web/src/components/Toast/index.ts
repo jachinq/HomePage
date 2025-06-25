@@ -1,4 +1,4 @@
-import { createVNode, render, App } from 'vue'
+import { createVNode, render, App, getCurrentInstance } from 'vue'
 import Toast from './Toast.vue'
 import type { ToastOptions, ToastService } from './types'
 
@@ -88,5 +88,8 @@ const ToastPlugin = {
   }
 }
 
+export const useToast = () => {
+  return getCurrentInstance()?.proxy?.$toast;
+}
 export default ToastPlugin
 export type { ToastOptions, ToastService } 

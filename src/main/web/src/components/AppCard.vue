@@ -6,7 +6,7 @@
             <div class="px-6 py-4 relative">
                 <div class="flex items-center mb-2 gap-2">
                     <template v-if="props.app.icon">
-                        <div v-html="props.app.icon" class="w-6 h-6 overflow-hidden middle-0 md:block"></div>
+                        <div v-html="props.app.icon" class="icon w-6 h-6 overflow-hidden middle-0 md:block"></div>
                     </template>
 
                     <div class="font-bold text-xl hover:underline">{{ props.app.name }}</div>
@@ -24,29 +24,22 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, getCurrentInstance } from 'vue'
+import { ref } from 'vue'
+import { useToast } from "@/components/toast";
+import { AppSet } from '@/interface/appset';
 
-interface App {
-    name: string
-    description: string
-    port: number,
-    outerUrl: string,
-    icon: string
-}
-
-const context = getCurrentInstance()?.appContext.config.globalProperties;
-const toast = context?.$toast;
+const toast = useToast()
 
 const configData = ref<any>({})
 
 const props = defineProps<{
-    app: App,
+    app: AppSet,
     innerMode: boolean,
     innerDomain: String,
     outerDomain: String,
 }>()
 
-const innderDomainProc = (innerDomain: String): String => {
+const innerDomainProc = (innerDomain: String): String => {
     if (!innerDomain) return "";
     if (innerDomain.startsWith("http://") || innerDomain.startsWith("https://")) {
         innerDomain = innerDomain.replace("http://", "//").replace("https://", "//");
@@ -59,40 +52,51 @@ const innderDomainProc = (innerDomain: String): String => {
     return innerDomain;
 }
 
-const outerDomainProc = (outerUrl: String): String => {
+const outerDomainProc = (outerUrl: string): string => {
     if (!outerUrl) return "";
     if (outerUrl.endsWith("/")) {
         outerUrl = outerUrl.slice(0, -1);
     }
     if (outerUrl.startsWith("http://") || outerUrl.startsWith("https://")) {
-        outerUrl = outerUrl.replace("http://", "//").replace("https://", "//");
         return outerUrl;
     }
     // 没有带 http:// 或 https:// 则认为是相对路径
-    return `//##outerUrl##.${outerUrl}`;
+    return `//${outerUrl}.${props.outerDomain}`;
 };
 
-const openApp = (app: App) => {
-    console.log(configData.value)
+const openApp = (app: AppSet) => {
+    // console.log(configData.value)
+    if (!openWithInnerMode(app) && !openWithOuterMode(app)) {
+        toast.error("未配置内网地址或端口，无法使用内网模式打开")
+    }
+}
+
+const openWithInnerMode = (app: AppSet) => {
     if (props.innerMode) {
-        let innerDomain = innderDomainProc(props.innerDomain);
+        let innerDomain = innerDomainProc(props.innerDomain);
         if (innerDomain && app.port) {
             window.open(`${innerDomain}:${app.port}`, "_blank");
+            return true;
         } else {
-            toast.error("未配置内网地址或端口，无法使用内网模式打开")
+            return false;
         }
-    } else {
-        if (!app.outerUrl || !props.outerDomain) {
-            toast.error("未配置外网地址")
-            return
-        }
-        window.open(outerDomainProc(props.outerDomain).replace("##outerUrl##", app.outerUrl), "_blank");
     }
+    return true;
+}
+
+const openWithOuterMode = (app: AppSet) => {
+    if (!app.outerUrl || !props.outerDomain) {
+        toast.error("未配置外网地址")
+        return false;
+    }
+    console.log(outerDomainProc(app.outerUrl))
+    window.open(outerDomainProc(app.outerUrl), "_blank");
+    return true;
 }
 </script>
 
 <style>
-.icon {
+.icon svg {
     width: 100%;
     height: 100%;
     object-fit: contain;

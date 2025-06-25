@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {ref, withDefaults, defineProps, defineEmits} from 'vue';
+import { ref } from 'vue';
 import {HabitEntity, HabitLogEntity} from "../interface/habit.ts";
 
 interface DateProp {

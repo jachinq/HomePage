@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { defineProps, defineEmits, ref, withDefaults } from 'vue'
+import { ref } from 'vue'
 
 type input = string | number
 

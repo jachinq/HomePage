@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {defineProps, defineEmits, computed, ref} from 'vue'
+import {computed, ref, getCurrentInstance, onMounted} from 'vue'
 import {Dialog, DialogDescription, DialogPanel, DialogTitle} from "@headlessui/vue";
 
 interface OpenModal {
@@ -14,7 +14,18 @@ const props = defineProps<{
   cancelText?: string
   defaultData?: any
 }>()
+const emitList = ["onClose", "onDelete", "onSubmit", "onCancel", "onReset"]
 const emit = defineEmits(["onClose", "onDelete", "onSubmit", "onCancel", "onReset"])
+
+// 判断父组件是否有对应的事件监听
+const hasEmitListener = ref<any>({})
+onMounted(() => {
+  const internal = getCurrentInstance();
+  const props = (internal?.vnode.props || {}) as Record<string, any>
+  const check = (key: string) => typeof props[key] === 'function'
+  hasEmitListener.value = emitList.some(key => check(key))
+})
+
 const handleClose = (value: any) => {
   emit('onClose', value)
 }
@@ -23,7 +34,11 @@ const handleSubmit = () => {
   emit("onSubmit")
 }
 const handleCancel = () => {
-  emit("onCancel")
+  if (hasEmitListener.value.onCancel) {
+    emit("onCancel")
+  } else {
+    handleClose(false)
+  }
 }
 
 const handleDelClick = () => {
@@ -51,7 +66,7 @@ const deleteBtnText = ref("删除")
 
 <template>
   <Dialog :open="isOpen" @close="handleClose" class="relative z-50">
-    <div class="fixed inset-0 flex w-screen items-center justify-center p-4 bg-slate-900/80" @click="handleClose">
+    <div class="fixed inset-0 flex w-screen items-center justify-center p-4 bg-slate-900/80">
       <DialogPanel class="p-8 w-full max-w-lg rounded-lg bg-gray-800">
         <DialogTitle>习惯</DialogTitle>
         <DialogDescription>
@@ -59,7 +74,6 @@ const deleteBtnText = ref("删除")
             <slot name="form"></slot>
           </form>
         </DialogDescription>
-
 
         <div class="mt-4 flex gap-2">
           <button type="button"

@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   time: {
@@ -48,11 +48,12 @@ const formattedTime = computed(() => {
   // 简单格式化，仅支持 HH:mm, HH:mm:ss, yyyy-MM-dd, yyyy/MM/dd
   let fmt = props.format
   fmt = fmt.replace('yyyy', date.getFullYear().toString())
-  fmt = fmt.replace('MM', pad(date.getMonth() + 1))
-  fmt = fmt.replace('dd', pad(date.getDate()))
-  fmt = fmt.replace('HH', pad(date.getHours()))
-  fmt = fmt.replace('mm', pad(date.getMinutes()))
-  fmt = fmt.replace('ss', pad(date.getSeconds()))
+  fmt = fmt.replace('MM', pad(date.getMonth() + 1).toString())
+  fmt = fmt.replace('dd', pad(date.getDate()).toString())
+  fmt = fmt.replace('HH', pad(date.getHours()).toString())
+  fmt = fmt.replace('mm', pad(date.getMinutes()).toString())
+  fmt = fmt.replace('mm', pad(date.getMinutes()).toString())
+  fmt = fmt.replace('ss', pad(date.getSeconds()).toString())
   return fmt
 })
 
@@ -67,8 +68,8 @@ const formattedDate = computed(() => {
   }
   let fmt = props.dateFormat
   fmt = fmt.replace('yyyy', date.getFullYear().toString())
-  fmt = fmt.replace('MM', pad(date.getMonth() + 1))
-  fmt = fmt.replace('dd', pad(date.getDate()))
+  fmt = fmt.replace('MM', pad(date.getMonth() + 1).toString())
+  fmt = fmt.replace('dd', pad(date.getDate()).toString())
   fmt = fmt.replace('d', weekMap[date.getDay()])
   return fmt
 })
