@@ -12,6 +12,15 @@ export default defineConfig({
       description: 'My Personal Home Page and App Entry',
     }
   },
+  resolve: {
+    alias: {
+      '@': './src',
+      '@components': './src/components',
+      '@views': './src/views',
+      '@assets': './src/assets',
+      '@api': './src/api',
+    },
+  },
   dev: {
     writeToDisk: false,
   },
