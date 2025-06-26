@@ -98,7 +98,7 @@ const selectedClass = (index: number) => {
 
 <template>
   <div class="min-h-[calc(100vh-140px)] min-w-full flex flex-col items-center justify-center px-16 relativize">
-    <div class="mask w-full h-full absolute top-0 left-0 bg-gray-800 opacity-30"></div>
+    <div class="mask w-full h-full absolute top-0 left-0 bg-black opacity-40"></div>
 
     <div class="z-10">
       <TimeDisplay/>
