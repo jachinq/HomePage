@@ -6,6 +6,7 @@ import FormInput from "../../components/form/FormInput.vue";
 import SaveModal from "../../components/SaveModal.vue";
 import FormRadio from "../../components/form/FormRadio.vue";
 import {useToast} from "@/components/toast";
+import {AppSet} from "@/interface/appset.ts";
 
 const toast = useToast();
 
@@ -24,7 +25,7 @@ const props = defineProps<{
     add: boolean,
     set: boolean
   },
-  oldData: any,
+  oldData: AppSet | any,
 }>()
 const emit = defineEmits(['close'])
 const handleClose = (value: any) => {
@@ -61,7 +62,7 @@ watch(props, (newVal, _) => {
   formData.value = {...newVal.oldData}
 })
 
-const formData = ref(props.oldData ? {...props.oldData} : {...defaultFormData})
+const formData = ref<AppSet | any>(props.oldData ? {...props.oldData} : {...defaultFormData})
 const options = [{value: 2, name: '应用'}, {value: 3, name: '书签'}];
 </script>
 
@@ -78,7 +79,7 @@ const options = [{value: 2, name: '应用'}, {value: 3, name: '书签'}];
         <FormRadio :options="options" v-model="formData.type"/>
       </FormItem>
       <FormItem label="名称">
-        <FormInput v-model="formData.name" placeholder="用用名称"/>
+        <FormInput v-model="formData.name" placeholder="应用名称"/>
       </FormItem>
       <FormItem label="描述">
         <FormInput type="textarea" v-model="formData.description" placeholder="应用描述"/>
@@ -86,19 +87,17 @@ const options = [{value: 2, name: '应用'}, {value: 3, name: '书签'}];
       <FormItem label="端口号">
         <FormInput v-model="formData.port" placeholder="内部应用使用的端口"/>
       </FormItem>
+      <FormItem label="外网地址">
+        <FormInput v-model="formData.outerUrl" placeholder="在外网时的访问地址"/>
+      </FormItem>
       <FormItem label="分类">
         <FormInput v-model="formData.category" placeholder="书签的分类"/>
       </FormItem>
       <FormItem label="图标">
         <template #label>
-          <label for="name" class="block text-sm font-bold text-gray-400">图标
             <a href="https://www.iconfont.cn/" class="text-blue-400 hover:text-blue-500" target="_blank">更多svg</a>
-          </label>
         </template>
         <FormInput v-model="formData.icon" placeholder="支持svg图标"/>
-      </FormItem>
-      <FormItem label="外网地址">
-        <FormInput v-model="formData.outerUrl" placeholder="在外网时的访问地址"/>
       </FormItem>
     </template>
   </SaveModal>
