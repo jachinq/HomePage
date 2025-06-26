@@ -98,11 +98,13 @@ const selectedClass = (index: number) => {
 
 <template>
   <div class="min-h-[calc(100vh-140px)] min-w-full flex flex-col items-center justify-center px-16 relativize">
-    <div class="clock">
+    <div class="mask w-full h-full absolute top-0 left-0 bg-gray-800 opacity-30"></div>
+
+    <div class="z-10">
       <TimeDisplay/>
     </div>
 
-    <div v-if="state.isLogin" class="flex gap-2 mt-1">
+    <div v-if="state.isLogin" class="flex gap-2 mt-1 z-10">
       <span class="text-center text-sm text-gray-400 cursor-pointer hover:underline"
             @click="$router.push('/app')">应用</span>
       <span class="text-center text-sm text-gray-400 cursor-pointer hover:underline"
@@ -126,5 +128,6 @@ const selectedClass = (index: number) => {
 
 
     <UserAvatar :login="state.isLogin" :avatar-url="state.user?.avatarUrl" @click="handleUser"/>
+    
   </div>
 </template>
