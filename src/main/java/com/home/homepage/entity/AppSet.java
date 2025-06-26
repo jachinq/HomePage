@@ -37,6 +37,7 @@ public class AppSet {
     private Integer type; // 类型 0-系统 1-自定义
     private Integer status; // 状态 0-禁用 1-启用
     private Integer port; // 端口号
+    private Integer sort; // 排序
     private String name;
     private String description;
     private String pinyin; // name + description 的拼音，用于快速查询

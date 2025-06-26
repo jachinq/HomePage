@@ -2,6 +2,7 @@ package com.home.homepage.service;
 
 import com.home.homepage.entity.AppSet;
 import com.home.homepage.entity.modal.AppSetListModal;
+import com.home.homepage.entity.modal.ImportAppSetModal;
 import com.home.homepage.repository.AppSetRepository;
 import com.home.homepage.utils.Core;
 import com.home.homepage.utils.PinyinUtil;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author Jachin
@@ -26,15 +29,21 @@ public class AppSetService {
         this.appSetRepository = habitLogRepository;
     }
 
-    public Result save(AppSet sexDaily) {
-        AppSet save = appSetRepository.save(sexDaily);
-        save.setPinyin(save.generatePinyin());
+    public Result save(AppSet appSet) {
+        appSet.setUserId(Core.getUid());
+        appSet.setPinyin(appSet.generatePinyin());
+        AppSet save = appSetRepository.save(appSet);
         System.out.println(save);
         return Result.success(save);
     }
+    public Result batchSave(List<AppSet> appSet) {
+        appSet.forEach(app -> app.setUserId(Core.getUid()));
+        appSetRepository.saveAll(appSet);
+        return Result.success();
+    }
 
-    public Result update(AppSet sexDaily) {
-        AppSet save = appSetRepository.save(sexDaily);
+    public Result update(AppSet appSet) {
+        AppSet save = appSetRepository.save(appSet);
         return Result.success(save);
     }
 
@@ -45,7 +54,10 @@ public class AppSetService {
 
     @SneakyThrows
     public Result list(AppSetListModal dto) {
+        dto.setSort("sort");
+        dto.setDesc(false);
         Pageable pageable = dto.getPageable();
+
         Page<AppSet> all;
         if (dto.getName() != null) {
             all = appSetRepository.findByKeyword(Core.getUid(), dto.getType(), PinyinUtil.generate(dto.getName()), pageable);
@@ -53,5 +65,9 @@ public class AppSetService {
             all = appSetRepository.findByUserIdAndType(Core.getUid(), dto.getType(), pageable);
         }
         return Result.success(all);
+    }
+
+    public Result importData(ImportAppSetModal dto) {
+        return Result.success();
     }
 }

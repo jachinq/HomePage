@@ -2,6 +2,7 @@ package com.home.homepage.controller;
 
 import com.home.homepage.entity.AppSet;
 import com.home.homepage.entity.modal.AppSetListModal;
+import com.home.homepage.entity.modal.ImportAppSetModal;
 import com.home.homepage.service.AppSetService;
 import com.home.homepage.utils.Core;
 import com.home.homepage.utils.PinyinUtil;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author Jachin
@@ -32,8 +35,12 @@ public class AppSetController {
 
     @PostMapping("/save")
     public Result create(@RequestBody AppSet dto){
-        dto.setUserId(Core.getUser().getId());
         return appSetService.save(dto);
+    }
+
+    @PostMapping("/batchSave")
+    public Result batchSave(@RequestBody List<AppSet> dto){
+        return appSetService.batchSave(dto);
     }
 
     @PostMapping("/delete")
@@ -44,5 +51,10 @@ public class AppSetController {
     @GetMapping("/list")
     public Result list(AppSetListModal dto){
         return appSetService.list(dto);
+    }
+
+    @PostMapping("/import")
+    public Result importData(@RequestBody ImportAppSetModal dto) {
+        return appSetService.importData(dto);
     }
 }
