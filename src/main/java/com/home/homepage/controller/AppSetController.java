@@ -2,10 +2,7 @@ package com.home.homepage.controller;
 
 import com.home.homepage.entity.AppSet;
 import com.home.homepage.entity.modal.AppSetListModal;
-import com.home.homepage.entity.modal.ImportAppSetModal;
 import com.home.homepage.service.AppSetService;
-import com.home.homepage.utils.Core;
-import com.home.homepage.utils.PinyinUtil;
 import com.home.homepage.utils.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +51,7 @@ public class AppSetController {
     }
 
     @PostMapping("/import")
-    public Result importData(@RequestBody ImportAppSetModal dto) {
+    public Result importData(@RequestBody List<AppSet> dto) {
         return appSetService.importData(dto);
     }
 }

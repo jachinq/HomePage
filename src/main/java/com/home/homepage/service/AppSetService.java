@@ -1,8 +1,8 @@
 package com.home.homepage.service;
 
+import com.home.homepage.define.AppType;
 import com.home.homepage.entity.AppSet;
 import com.home.homepage.entity.modal.AppSetListModal;
-import com.home.homepage.entity.modal.ImportAppSetModal;
 import com.home.homepage.repository.AppSetRepository;
 import com.home.homepage.utils.Core;
 import com.home.homepage.utils.PinyinUtil;
@@ -36,15 +36,11 @@ public class AppSetService {
         System.out.println(save);
         return Result.success(save);
     }
+
     public Result batchSave(List<AppSet> appSet) {
         appSet.forEach(app -> app.setUserId(Core.getUid()));
         appSetRepository.saveAll(appSet);
         return Result.success();
-    }
-
-    public Result update(AppSet appSet) {
-        AppSet save = appSetRepository.save(appSet);
-        return Result.success(save);
     }
 
     public Result delete(AppSet dto) {
@@ -67,7 +63,20 @@ public class AppSetService {
         return Result.success(all);
     }
 
-    public Result importData(ImportAppSetModal dto) {
+    public Result importData(List<AppSet> list) {
+        List<Integer> types = AppType.valueList();
+
+        list.forEach(appSet -> {
+            appSet.setId(null); // 将 id 移除
+            appSet.setUserId(Core.getUid()); // 关联用户
+            appSet.setPinyin(appSet.generatePinyin());
+            Integer type = appSet.getType();
+            if (type == null || !types.contains(type)) {
+                appSet.setType(AppType.Bookmark.getValue()); // 默认为书签
+
+            }
+        });
+
         return Result.success();
     }
 }

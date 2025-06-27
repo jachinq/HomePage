@@ -1,11 +1,16 @@
 package com.home.homepage.entity;
 
+import com.home.homepage.define.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,30 +36,27 @@ public class User implements UserDetails {
     private String password;
 
     @Column(nullable = false)
-    private String role = "ROLE_USER";
+    private String role = UserRole.User.name();
+
+    @Column(nullable = false)
+    private Boolean enabled = true;
+
+    private String avatar;
+
+    @CreationTimestamp
+    @ToString.Exclude
+    private Calendar createTime;
+    @UpdateTimestamp
+    @ToString.Exclude
+    private Calendar updateTime;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
