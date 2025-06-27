@@ -1,11 +1,9 @@
 // stores/useUserStore.js
-import {reactive} from 'vue'
-import {validate} from "../api/AuthApi.ts";
+import { reactive } from 'vue'
+import { validate } from "../api/AuthApi.ts";
 import storage from "../utils/storage.ts";
-
-interface User {
-    avatarUrl: string
-}
+import { User } from '@/interface/user.ts';
+import { getUserInfo } from '@/api/userApi.ts';
 
 const state = reactive<{
     user: User | null,
@@ -21,29 +19,33 @@ const validateToken = async () => {
     if (!token) {
         return
     }
-    const r = await validate({
-        token, user: {}
-    });
-    if (r.success) {
-        state.user = r.data
+    const result = await validate({ token });
+    if (result.success) {
         state.isLogin = true
+        const result = await getUserInfo({});
+        if (result.success) {
+            state.user = result.data
+        }
     } else {
         state.user = null
         state.isLogin = false
     }
+    console.log(state)
 }
 validateToken();
 
 export function useUserStore() {
-    function login(userData: User) {
+    function login(userData: User, router?: () => {}) {
         state.user = userData
         state.isLogin = true
+        router && router()
     }
 
-    function logout() {
+    function logout(router?: () => {}) {
         state.user = null
         state.isLogin = false
         storage.removeToken()
+        router && router()
     }
 
     return {

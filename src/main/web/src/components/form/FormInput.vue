@@ -7,12 +7,14 @@ type input = string | number
 const props = withDefaults(defineProps<{
   modelValue?: input,
   placeholder?: string,
+  disable?: boolean
   type?: string,
   class?: string
   width?: string
 }>(), {
   type: 'text',
-  width: 'full'
+  width: 'full',
+  disable: false,
 })
 const emit = defineEmits<(e: 'update:modelValue', value: input) => void>()
 
@@ -46,6 +48,8 @@ const isComposing = ref(false)
          @compositionstart="handleCompositionStart"
          @compositionend="handleCompositionEnd"
          class="px-4 py-2 border border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-         :class="'w-' + props.width"
-         :placeholder="placeholder">
+         :class="'w-' + props.width + (props.class? ' '+props.class : '') + (disable? ' cursor-not-allowed' : '')"
+         :placeholder="placeholder"
+         :disabled="disable"
+         >
 </template>

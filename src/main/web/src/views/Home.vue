@@ -12,7 +12,7 @@ interface SearchText {
 }
 
 const router = useRouter();
-const { state, logout } = useUserStore()
+const { state } = useUserStore()
 
 const keyWordTemplate = "##SEARCH_VALUE##";
 const searchUrl = 'https://www.bing.com/search?&form=QBLH&q=' + keyWordTemplate;
@@ -37,9 +37,8 @@ const handleSearch = (searchValueTmp: string) => {
   }
 }
 const handleUser = () => {
-  // 判断状态，登录的话就是退出，退出的话就是登录
   if (state.isLogin) {
-    logout()
+    routeTo('/user')
   } else {
     routeTo('/login')
   }
@@ -127,7 +126,9 @@ const selectedClass = (index: number) => {
     </div>
 
 
-    <UserAvatar :login="state.isLogin" :avatar-url="state.user?.avatarUrl" @click="handleUser"/>
+    <div class="fixed top-16 right-16 z-50">
+      <UserAvatar :avatar="state.user?.avatar" @click="handleUser"/>
+    </div>
     
   </div>
 </template>

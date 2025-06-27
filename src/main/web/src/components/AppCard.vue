@@ -1,15 +1,20 @@
 <template>
 
-  <div class="w-full sm:1/2 md:w-1/4 xl:w-1/6 2xl:w-1/8 min-w-[250px]">
+  <div class="w-full sm:1/2 md:w-1/4 xl:w-1/6 2xl:w-1/9 min-w-[200px]">
     <div class="group bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:bg-slate-700 cursor-pointer"
          @click="openApp(app)">
       <div class="px-6 py-4 relative">
         <div class="flex items-center mb-2 gap-2">
           <template v-if="props.app.icon">
             <div v-if="props.app.icon.startsWith('http://') || props.app.icon.startsWith('https://') || props.app.icon.startsWith('data:image/')">
-                <img :src="props.app.icon" class="icon w-6 h-6 overflow-hidden middle-0 md:block" alt="">
+                <img :src="props.app.icon" class="icon w-12 h-12 overflow-hidden middle-0 md:block" alt="">
             </div>
-            <div v-else v-html="props.app.icon" class="icon w-6 h-6 overflow-hidden middle-0 md:block"></div>
+            <div v-else v-html="props.app.icon" class="icon w-12 h-12 overflow-hidden middle-0 md:block"></div>
+          </template>
+          <template v-else>
+            <div class="icon w-12 h-12 overflow-hidden middle-0 md:block">
+              <img :src="appIcon" alt="">
+            </div>
           </template>
 
           <div class="font-bold text-xl group-hover:underline">{{ props.app.name }}</div>
@@ -29,6 +34,7 @@
 <script setup lang="ts">
 import {useToast} from "@/components/toast";
 import {AppConfig, AppSet} from '@/interface/appset';
+import appIcon from "@/assets/unknow.svg";
 
 const toast = useToast()
 

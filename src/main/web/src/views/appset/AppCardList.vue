@@ -25,10 +25,20 @@ const openSaveModal = (app: AppSet | null) => {
   if (appSetData.value) {
     openModal.value = { add: false, set: true };
   } else {
+    const findMaxSort = (list: AppSet[]): number => {
+      let maxSort = 0;
+      list.forEach(app => {
+        if (app.sort ?? 0 > maxSort) {
+          maxSort = app.sort ?? 0;
+        }
+      });
+      return maxSort;
+    }
+
     openModal.value = { add: true, set: false };
     appSetData.value = {
       type: props.type,
-      sort: total.value + 1,
+      sort: Math.max(findMaxSort(appSet.value), total.value) + 1,
     }
   }
 }
@@ -117,15 +127,16 @@ watch(() => props.searchValue, () => {
 <template>
   <div class="flex-grow mt-2">
     <div class="flex mt-2 items-center gap-4">
-      <span class="text-2xl font-bold">{{  props.type === AppType.SYS ? '系统应用' : props.type === AppType.APP ? '应用' : '书签'  }}</span>
-        <span class="hover:text-blue-400 cursor-pointer select-none underline" @click="openSaveModal(null)">添加</span>
-        <span class="hover:text-blue-400 cursor-pointer select-none underline" @click="refresh">刷新</span>
-        <span v-if="changeAppSort" class="hover:text-blue-400 cursor-pointer select-none underline"
-          @click="saveAppSort">保存排序</span>
+      <span class="text-2xl font-bold">{{ props.type === AppType.SYS ? '系统应用' : props.type === AppType.APP ? '应用' : '书签'
+        }}</span>
+      <span class="hover:text-blue-400 cursor-pointer select-none underline" @click="openSaveModal(null)">添加</span>
+      <span class="hover:text-blue-400 cursor-pointer select-none underline" @click="refresh">刷新</span>
+      <span v-if="changeAppSort" class="hover:text-blue-400 cursor-pointer select-none underline"
+        @click="saveAppSort">保存排序</span>
     </div>
 
     <div class="flex flex-wrap gap-2 items-center">
-      <Draggable :list="appSet" class="flex flex-wrap gap-2 items-center" @change="changeAppSort = true">
+      <Draggable :list="appSet" class="flex flex-wrap gap-2 items-center w-full" @change="changeAppSort = true">
         <transition-group>
           <AppCard v-for="app in appSet" :app="app" :config-data="props.configData" :key="app.id">
             <span class="text-sm text-gray-400 hover:underline hover:cursor-pointer hover:text-blue-300"

@@ -1,18 +1,33 @@
 <template>
-  <div class="fixed top-16 right-16 z-50 flex items-center justify-center cursor-pointer" :class="customClass"
+  <div class="cursor-pointer" :class="customClass"
     @click="onClick">
-    <template v-if="avatarUrl">
-      <img :src="avatarUrl" alt="用户头像"
-        class="w-12 h-12 rounded-full border-2 border-gray-200 shadow object-cover bg-gray-800 hover:border-blue-500 hover:shadow-lg" />
+    <template v-if="avatar">
+      <img :src="avatar" alt="用户头像"
+        class="w-12 h-12 rounded-full border-4 border-gray-200 shadow object-cover hover:border-blue-500 hover:shadow-lg" 
+        :class="{
+          'w-48 h-48': size === 'large',
+          'w-24 h-24': size === 'default',
+          'w-12 h-12': size === 'small',
+          'bg-sky-800 text-gray-200' : state?.isLogin,
+          'bg-gray-600 text-gray-200': !state?.isLogin
+        }"
+        />
+        
     </template>
     <template v-else>
       <div
-        class="w-16 h-16 rounded-full flex items-center hover:bg-sky-700 justify-center border-2 border-gray-400 shadow text-2xl font-bold select-none"
-        :class="login ? 'bg-sky-800 text-gray-200' : 'bg-gray-600 text-gray-200'">
-        <template v-if="login">
-          <Tooltips text="点击退出登录">
+        class="rounded-full flex items-center hover:bg-sky-700 justify-center border-4 border-gray-400 shadow text-2xl font-bold select-none"
+        :class="{
+          'w-48 h-48': size === 'large',
+          'w-24 h-24': size === 'default',
+          'w-12 h-12': size === 'small',
+          'bg-sky-800 text-gray-200' : state?.isLogin,
+          'bg-gray-600 text-gray-200': !state?.isLogin
+        }">
+        <template v-if="state?.isLogin">
+          <!-- <Tooltips text="点击退出登录"> -->
             <img :src="whitecat" alt="白猫" class="" />
-          </Tooltips>
+          <!-- </Tooltips> -->
         </template>
         <template v-else>
           <Tooltips text="点击登录">
@@ -25,14 +40,14 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '@/stores/useUserStore';
 import Tooltips from './Tooltips.vue';
 import whitecat from '@/assets/whitecat.svg'
+
+const { state } = useUserStore()
+
 defineProps({
-  login: {
-    type: Boolean,
-    default: false,
-  },
-  avatarUrl: {
+  avatar: {
     type: [String, null],
     default: '',
   },
@@ -40,6 +55,10 @@ defineProps({
     type: String,
     default: '',
   },
+  size: {
+    type: [String, null],
+    default: 'default',
+  }
 })
 
 const emits = defineEmits(['click'])

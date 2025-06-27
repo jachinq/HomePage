@@ -36,11 +36,3 @@ export function logout(data: any): Promise<Result> {
     );
 }
 
-// 获取用户信息
-export function getUserInfo(data: any): Promise<Result> {
-    return new Promise((resolve, reject) =>
-        FetchUtil.get(prefix + '/user/info', data).then(res => res.json())
-            .then(data => resolve(data))
-            .catch(err => reject(err))
-    );
-}

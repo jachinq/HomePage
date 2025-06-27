@@ -68,9 +68,9 @@ const deleteBtnText = ref("删除")
   <Dialog :open="isOpen" @close="handleClose" class="relative z-50">
     <div class="fixed inset-0 flex w-screen items-center justify-center p-4 bg-slate-900/80">
       <DialogPanel class="p-8 w-full max-w-lg rounded-lg bg-gray-800">
-        <DialogTitle>习惯</DialogTitle>
+        <DialogTitle>{{ props.name }}</DialogTitle>
         <DialogDescription>
-          <form>
+          <form @submit.prevent="handleSubmit">
             <slot name="form"></slot>
           </form>
         </DialogDescription>
