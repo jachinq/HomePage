@@ -139,7 +139,7 @@ watch(() => props.searchValue, () => {
       <Draggable :list="appSet" class="flex flex-wrap gap-2 items-center w-full" @change="changeAppSort = true">
         <transition-group>
           <AppCard v-for="app in appSet" :app="app" :config-data="props.configData" :key="app.id">
-            <span class="text-sm text-gray-400 hover:underline hover:cursor-pointer hover:text-blue-300"
+            <span class="hidden group-hover:block text-sm text-gray-400 hover:underline hover:cursor-pointer hover:text-blue-300 bg-slate-800 px-2 rounded-2xl"
               @click.prevent.stop="openSaveModal(app)">
               修改
             </span>

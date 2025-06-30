@@ -5,13 +5,7 @@ import com.home.homepage.entity.User;
 import com.home.homepage.entity.modal.AppSetListModal;
 import com.home.homepage.service.AppSetService;
 import com.home.homepage.utils.Core;
-import com.home.homepage.utils.PinyinUtil;
 import com.home.homepage.utils.Result;
-import net.sourceforge.pinyin4j.PinyinHelper;
-import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
-import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
-import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
-import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +17,6 @@ class HomePageApplicationTests {
 
     @Test
     void contextLoads() {
-        System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     }
 
     @Autowired

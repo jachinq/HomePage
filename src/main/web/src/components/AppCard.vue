@@ -1,6 +1,6 @@
 <template>
 
-  <div class="w-full sm:1/2 md:w-1/4 xl:w-1/6 2xl:w-1/9 min-w-[200px]">
+  <div class="w-full sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/7 2xl:w-1/9 min-w-[200px]">
     <div class="group bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:bg-slate-700 cursor-pointer"
          @click="openApp(app)">
       <div class="px-6 py-4 relative">
@@ -17,13 +17,13 @@
             </div>
           </template>
 
-          <div class="font-bold text-xl group-hover:underline">{{ props.app.name }}</div>
+          <span class="font-bold text-xl group-hover:underline max-w-full overflow-hidden whitespace-nowrap">{{ props.app.name }}</span>
         </div>
-        <span class="text-gray-400 text-sm" :title="props.app.description">
+        <span class="text-gray-400 text-sm max-w-full overflow-hidden whitespace-nowrap" :title="props.app.description">
                     {{ props.app.description }}
                 </span>
 
-        <div class="absolute top-1/5 right-4 z-50 mx-2">
+        <div class="absolute top-1 right-[-4px] z-50 mx-2">
           <slot></slot>
         </div>
       </div>
