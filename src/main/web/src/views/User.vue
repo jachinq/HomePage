@@ -8,8 +8,10 @@ import { useToast } from '@/components/toast';
 import UserAvatar from '@/components/UserAvatar.vue';
 import { User } from '@/interface/user';
 import { useUserStore } from '@/stores/useUserStore';
-import { ref } from 'vue';
+import {ref, watch} from 'vue';
 import { useRouter } from 'vue-router';
+import {useGlobalConfigStore} from "@/stores/useGlobalConfigStore.ts";
+import {saveGlobalConfig} from "@/api/globalConfigApi.ts";
 
 const toast = useToast();
 const router = useRouter();
@@ -35,6 +37,7 @@ fetchUser();
 
 const openModal = ref({ add: false, set: false });
 const openAvatarModal = ref({ add: false, set: false });
+const openConfigModal = ref({ add: false, set: false });
 const confirmLogout = ref(false);
 
 const userForm = ref({
@@ -116,6 +119,22 @@ const handleLogout = () => {
   logout(() => router.push('/'))
 }
 
+let {state, refresh} = useGlobalConfigStore();
+const configForm = ref<any>({...state.config});
+watch(()=> state.config, (value)=>{
+  configForm.value = value
+})
+const handleSaveConfig = async () => {
+  const result = await saveGlobalConfig({...configForm.value});
+  if (result.success) {
+    refresh()
+    toast.success(result.message)
+    openConfigModal.value.add = false
+  } else {
+    toast.error(result.message)
+  }
+
+}
 </script>
 
 <template>
@@ -138,6 +157,7 @@ const handleLogout = () => {
       </div>
     </div>
     <div class="mt-2 flex gap-8 text-gray-200 font-bold">
+      <button @click="openConfigModal.add = true" class="bg-sky-500 hover:bg-sky-700 py-2 px-4 rounded">更多设置</button>
       <button @click="openModal.add = true" class="bg-sky-500 hover:bg-sky-700 py-2 px-4 rounded">修改账号密码</button>
       <!-- <button @click="fetchUser" class="bg-red-500 hover:bg-red-700 py-2 px-4 rounded">修改密码</button> -->
       <button @click="handleLogout"
@@ -180,5 +200,15 @@ const handleLogout = () => {
         </FormItem>
       </template>
     </SaveModal>
+
+    <SaveModal name="更多设置" :open-modal="openConfigModal" @on-close="openConfigModal.add=false"
+      @on-submit="handleSaveConfig">
+      <template #form>
+        <FormItem label="背景图片">
+          <FormInput v-model="configForm.bgUrl"/>
+        </FormItem>
+      </template>
+    </SaveModal>
+
   </div>
 </template>
