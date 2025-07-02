@@ -18,6 +18,15 @@ Content-Type: application/json
   "token": "{{token}}"
 }
 
+### 登录
+POST {{url}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "jachin",
+  "password": "176866"
+}
+
 ### 获取配置信息
 GET {{url}}/api/appConfig/info
 Authorization: Bearer {{token}}
