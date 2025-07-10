@@ -8,10 +8,11 @@ import { useToast } from '@/components/toast';
 import UserAvatar from '@/components/UserAvatar.vue';
 import { User } from '@/interface/user';
 import { useUserStore } from '@/stores/useUserStore';
-import {ref, watch} from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import {useGlobalConfigStore} from "@/stores/useGlobalConfigStore.ts";
-import {saveGlobalConfig} from "@/api/globalConfigApi.ts";
+import { useGlobalConfigStore } from "@/stores/useGlobalConfigStore.ts";
+import { saveGlobalConfig } from "@/api/globalConfigApi.ts";
+import { preProcFormData } from '@/utils/commUtil';
 
 const toast = useToast();
 const router = useRouter();
@@ -54,11 +55,12 @@ const handleSubmit = async () => {
     return;
   }
 
-  const data = { 
+  const data = {
     username: userForm.value.username,
     oldPassword: userForm.value.oldPassword,
     newPassword: userForm.value.newPassword,
-   }
+  }
+  preProcFormData(data)
   const result = await changePassword(data);
   if (result.success) {
     toast.success('修改账号密码成功');
@@ -94,9 +96,10 @@ const saveAvatar = async () => {
     toast.error('请选择头像');
     return;
   }
-  const data = { 
+  const data = {
     avatar: userForm.value.avatar,
-   }
+  }
+  preProcFormData(data)
   const result = await setUserAvatar(data);
   if (result.success) {
     toast.success('修改头像成功');
@@ -119,13 +122,15 @@ const handleLogout = () => {
   logout(() => router.push('/'))
 }
 
-let {state, refresh} = useGlobalConfigStore();
-const configForm = ref<any>({...state.config});
-watch(()=> state.config, (value)=>{
+let { state, refresh } = useGlobalConfigStore();
+const configForm = ref<any>({ ...state.config });
+watch(() => state.config, (value) => {
   configForm.value = value
 })
 const handleSaveConfig = async () => {
-  const result = await saveGlobalConfig({...configForm.value});
+  const data = { ...configForm.value };
+  preProcFormData(data)
+  const result = await saveGlobalConfig(data);
   if (result.success) {
     refresh()
     toast.success(result.message)
@@ -160,10 +165,9 @@ const handleSaveConfig = async () => {
       <button @click="openConfigModal.add = true" class="bg-sky-500 hover:bg-sky-700 py-2 px-4 rounded">更多设置</button>
       <button @click="openModal.add = true" class="bg-sky-500 hover:bg-sky-700 py-2 px-4 rounded">修改账号密码</button>
       <!-- <button @click="fetchUser" class="bg-red-500 hover:bg-red-700 py-2 px-4 rounded">修改密码</button> -->
-      <button @click="handleLogout"
-        class="bg-gray-500 hover:bg-gray-700 py-2 px-4 rounded"
+      <button @click="handleLogout" class="bg-gray-500 hover:bg-gray-700 py-2 px-4 rounded"
         :class="{ 'text-red-300': confirmLogout }">
-        {{ confirmLogout? '确认退出' : '退出登录' }}
+        {{ confirmLogout ? '确认退出' : '退出登录' }}
       </button>
     </div>
 
@@ -191,21 +195,24 @@ const handleSaveConfig = async () => {
       <template #form>
 
         <div class="flex gap-2 flex-row mt-2">
-          <span class="cursor-pointer hover:text-sky-400" :class="{ 'text-sky-500': uploadLocal }" @click="uploadLocal = true">本地上传</span>
-          <span class="cursor-pointer hover:text-sky-400" :class="{ 'text-sky-500': !uploadLocal }" @click="uploadLocal = false">网络地址/svg/base64</span>
+          <span class="cursor-pointer hover:text-sky-400" :class="{ 'text-sky-500': uploadLocal }"
+            @click="uploadLocal = true">本地上传</span>
+          <span class="cursor-pointer hover:text-sky-400" :class="{ 'text-sky-500': !uploadLocal }"
+            @click="uploadLocal = false">网络地址/svg/base64</span>
         </div>
         <FormItem>
-          <input v-if="uploadLocal" type="file" @change="uploadAvatar" class="border border-gray-300 rounded-md w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-sky-500" />
+          <input v-if="uploadLocal" type="file" @change="uploadAvatar"
+            class="border border-gray-300 rounded-md w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:border-sky-500" />
           <FormInput v-else v-model="userForm.avatar" />
         </FormItem>
       </template>
     </SaveModal>
 
-    <SaveModal name="更多设置" :open-modal="openConfigModal" @on-close="openConfigModal.add=false"
+    <SaveModal name="更多设置" :open-modal="openConfigModal" @on-close="openConfigModal.add = false"
       @on-submit="handleSaveConfig">
       <template #form>
         <FormItem label="背景图片">
-          <FormInput v-model="configForm.bgUrl"/>
+          <FormInput v-model="configForm.bgUrl" />
         </FormItem>
       </template>
     </SaveModal>

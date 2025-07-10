@@ -7,6 +7,7 @@ import SaveModal from "../../components/SaveModal.vue";
 import FormRadio from "../../components/form/FormRadio.vue";
 import {useToast} from "@/components/toast";
 import {AppSet} from "@/interface/appset.ts";
+import { preProcFormData } from '@/utils/commUtil';
 
 const toast = useToast();
 
@@ -41,6 +42,9 @@ const submitForm = async () => {
   if (!formData.value.description) {
     formData.value.description = "我也不知道它是干嘛的";
   }
+  // 处理formData
+  preProcFormData(formData.value);
+  
   let result = await saveAppSet(formData.value);
   if (result.success) {
     toast?.success(result.message);

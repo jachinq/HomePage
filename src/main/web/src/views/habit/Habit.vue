@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import HabitCalendar from '../../components/HabitCalendar.vue';
 import Loading from "../../components/Loading.vue";
-import {getCurrentInstance, ref} from 'vue';
+import { getCurrentInstance, ref } from 'vue';
 import Tooltips from "../../components/Tooltips.vue";
 import EditHabitModal from "./EditHabitModal.vue";
 import EditHabitLogModal from "./EditHabitLogModal.vue";
-import {HabitEntity, HabitLogEntity} from "../../interface/habit.ts";
-import {getHabitList, getHabitLogList} from "../../api/habitApi.ts";
+import { HabitEntity, HabitLogEntity } from "../../interface/habit.ts";
+import { getHabitList, getHabitLogList } from "../../api/habitApi.ts";
 import BackToHome from "../../components/BackToHome.vue";
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
@@ -17,8 +17,10 @@ const loading = ref(false);
 const activeHabit = ref<HabitEntity | any>({});
 const activeHabitLog = ref({});
 const habitLogs = ref<HabitLogEntity[]>([]);
-const openHabitModal = ref({add: false, set: false});
-const openHabitLogModal = ref({add: false, set: false});
+const currentMonthHabitLogs = ref<HabitLogEntity[]>([]);
+const openHabitModal = ref({ add: false, set: false });
+const openHabitLogModal = ref({ add: false, set: false });
+const currentDate = ref<{ month: number, year: number }>({ month: new Date().getMonth() + 1, year: new Date().getFullYear() });
 
 const fetchHabits = async () => {
   loading.value = true;
@@ -42,6 +44,7 @@ const fetchHabitLogs = async () => {
   });
   if (result.success) {
     habitLogs.value = result.data
+    changeStatistic()
   } else {
     toast.error(result.message)
   }
@@ -49,13 +52,13 @@ const fetchHabitLogs = async () => {
 }
 
 const handelEditHabitModelClose = (success: any) => {
-  openHabitModal.value = {add: false, set: false}
+  openHabitModal.value = { add: false, set: false }
   if (success === true) {
     fetchHabits()
   }
 }
 const handelEditHabitLogModelClose = (success: any) => {
-  openHabitLogModal.value = {add: false, set: false}
+  openHabitLogModal.value = { add: false, set: false }
   if (success === true) {
     fetchHabitLogs()
   }
@@ -75,15 +78,29 @@ const handleDateClick = (date: any) => {
   }
   activeHabitLog.value = date?.log;
   if (activeHabitLog.value) {
-    openHabitLogModal.value = {add: false, set: true};
+    openHabitLogModal.value = { add: false, set: true };
   } else {
-    openHabitLogModal.value = {add: true, set: false};
+    openHabitLogModal.value = { add: true, set: false };
     activeHabitLog.value = {
       date: date.date,
       habitId: activeHabit.value.id
     }
   }
 
+}
+
+const handleDateChange = ({ month, year }: any) => {
+  currentDate.value = { month, year }
+  changeStatistic()
+}
+
+const changeStatistic = () => {
+  const { month, year } = currentDate.value;
+  // console.log('change statistic for month:', month, 'year:', year);
+  currentMonthHabitLogs.value = habitLogs.value.filter(log => {
+    const logDate = new Date(log.date || '');
+    return logDate.getFullYear() === year && logDate.getMonth() === month - 1
+  })
 }
 fetchHabits();
 </script>
@@ -93,19 +110,19 @@ fetchHabits();
 
     <div class="flex justify-between mb-2">
       <span class="text-2xl font-bold">习惯追踪</span>
-      <BackToHome/>
+      <BackToHome />
     </div>
 
     <!-- Habit List for selection -->
     <div class="flex flex-row items-center gap-2">
       <div class="">
-        <button @click="openHabitModal = {add: true, set: false}"
-                class="bg-sky-600 hover:bg-sky-500 text-gray-200 font-bold px-2 rounded cursor-pointer">新增
+        <button @click="openHabitModal = { add: true, set: false }"
+          class="bg-sky-600 hover:bg-sky-500 text-gray-200 font-bold px-2 rounded cursor-pointer">新增
         </button>
       </div>
       <div v-for="habit in habits" class="">
         <span class="text-xl font-bold cursor-pointer hover:text-sky-400"
-              :class="{ 'text-sky-400': activeHabit === habit }" @click="handleChangeHabit(habit)">{{
+          :class="{ 'text-sky-400': activeHabit === habit }" @click="handleChangeHabit(habit)">{{
             habit.name
           }}</span>
       </div>
@@ -117,24 +134,25 @@ fetchHabits();
         <div>
           <span class="text-lg">{{ activeHabit.description }}</span>
         </div>
-        <button @click="openHabitModal = {add: false, set: true}"
-                class="bg-sky-600 hover:bg-sky-500 text-gray-200 font-bold px-2 rounded cursor-pointer">Edit
+        <button @click="openHabitModal = { add: false, set: true }"
+          class="bg-sky-600 hover:bg-sky-500 text-gray-200 font-bold px-2 rounded cursor-pointer">Edit
         </button>
       </div>
     </div>
 
     <!-- 统计 -->
     <div class="flex flex-col items-center justify-center w-full h-16">
-      <div>
+      <div class="flex gap-2">
         <span class="font-bold">统计: </span>
-        <span>当前月份总次数：{{ habitLogs.length }}</span>
+        <span>总次数-{{ habitLogs.length }}</span>
+        <span>当月次数-{{ currentMonthHabitLogs.length }}</span>
       </div>
     </div>
 
     <!-- Calendar -->
     <div class="flex items-center justify-center w-full h-full">
-      <HabitCalendar :year="2025" :month="6" :habit="activeHabit" :logs="habitLogs" v-slot="{ date }"
-                     @date-click="handleDateClick">
+      <HabitCalendar :habit="activeHabit" :logs="habitLogs" v-slot="{ date }" @date-click="handleDateClick"
+        @date-change="handleDateChange">
         <div v-if="date?.log">
           <Tooltips :text="date.log?.extra || ''">
             <span class="text-lg">{{ date.log?.done ? activeHabit?.doneIcon : activeHabit?.failIcon }}</span>
@@ -143,13 +161,10 @@ fetchHabits();
       </HabitCalendar>
     </div>
 
-    <Loading :loading="loading"/>
+    <Loading :loading="loading" />
 
-    <EditHabitModal :open-modal="openHabitModal" :oldData="activeHabit" @close="handelEditHabitModelClose"/>
-    <EditHabitLogModal
-        :open-modal="openHabitLogModal"
-        :oldData="activeHabitLog"
-        :habit="activeHabit"
-        @close="handelEditHabitLogModelClose"/>
+    <EditHabitModal :open-modal="openHabitModal" :oldData="activeHabit" @close="handelEditHabitModelClose" />
+    <EditHabitLogModal :open-modal="openHabitLogModal" :oldData="activeHabitLog" :habit="activeHabit"
+      @close="handelEditHabitLogModelClose" />
   </div>
 </template>

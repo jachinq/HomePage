@@ -11,6 +11,7 @@ import {
 } from '@headlessui/vue'
 import { saveAppConfig, getAppConfig } from "@/api/appConfigApi.ts";
 import { getCurrentInstance } from "vue";
+import { preProcFormData } from '@/utils/commUtil';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -35,6 +36,7 @@ const handleOpenModalChange = (value: any) => {
 
 const submitForm = async () => {
   console.log(formData.value)
+  preProcFormData(formData.value);
   let result = await saveAppConfig(formData.value);
   if (result.success) {
     toast?.success(result.message);

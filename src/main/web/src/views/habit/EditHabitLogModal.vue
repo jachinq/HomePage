@@ -6,6 +6,7 @@ import SaveModal from "../../components/SaveModal.vue";
 import FormItem from "../../components/form/FormItem.vue";
 import FormInput from "../../components/form/FormInput.vue";
 import {HabitEntity, HabitLogEntity} from "../../interface/habit.ts";
+import { preProcFormData } from '@/utils/commUtil.ts';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -34,6 +35,7 @@ const handleStatus = async (done: boolean) => {
     })
   }
   console.log(habitLog)
+  preProcFormData(habitLog);
   let result = await saveHabitLog(habitLog);
   if (result.success) {
     toast?.success(result.message);

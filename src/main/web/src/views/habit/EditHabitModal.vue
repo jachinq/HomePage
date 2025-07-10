@@ -6,6 +6,7 @@ import {HabitEntity} from '../../interface/habit.ts';
 import {deleteHabit, saveHabit} from "../../api/habitApi.ts";
 import SaveModal from "../../components/SaveModal.vue";
 import FormInput from "../../components/form/FormInput.vue";
+import { preProcFormData } from '@/utils/commUtil.ts';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -26,6 +27,7 @@ const onSubmit = async () => {
     toast?.error('名称不能为空');
     return;
   }
+  preProcFormData(formData.value);
   let result = await saveHabit(formData.value);
   if (result.success) {
     toast?.success(result.message);

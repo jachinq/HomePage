@@ -30,7 +30,7 @@ const validateToken = async () => {
         state.user = null
         state.isLogin = false
     }
-    console.log(state)
+    // console.log(state)
 }
 validateToken();
 

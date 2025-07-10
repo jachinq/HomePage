@@ -2,7 +2,7 @@ import storage from './storage';
 
 // 判断是开发模式还是生产模式
 const isDev = process.env.NODE_ENV === 'development';
-console.log('isDev:', isDev);
+// console.log('isDev:', isDev);
 
 // 根据环境变量判断请求地址
 function procUrl(url: string): string {
