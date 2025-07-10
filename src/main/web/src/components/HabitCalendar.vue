@@ -1,9 +1,11 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import {HabitEntity, HabitLogEntity} from "../interface/habit.ts";
+import { randomString } from '@/utils/commUtil.ts';
 
 interface DateProp {
+  key: string,
   number: number,
   date: string,
   isToday?: boolean
@@ -34,11 +36,11 @@ const dates = ref(() => {
   if (startDay === 0) {
     startDay = 7
   }
-  console.log('Start day:', startDay, 'for month:', month.value);
+  // console.log('Start day:', startDay, 'for month:', month.value);
 
   // Fill empty cells before the first day of the month
   for (let i = 1; i < startDay; i++) {
-    dates.push({number: -1, date: ''});
+    dates.push({number: -1, date: '', key: randomString()});
   }
 
   const map: { [key: string]: any } = {}
@@ -49,13 +51,14 @@ const dates = ref(() => {
     const currentDate = new Date(year.value, month.value - 1, date + 1).toISOString().split('T')[0];
     const log = map[currentDate];
     dates.push({
+      key: randomString(),
       number: date,
       date: currentDate,
       isToday: today === currentDate,
       log
     });
   }
-  console.log('Generated dates array:', dates, map);
+  // console.log('Generated dates array:', dates, map);
   return dates;
 });
 
@@ -66,6 +69,7 @@ const prevMonth = () => {
   } else {
     month.value--;
   }
+  emit('dateChange', { month: month.value, year: year.value })
 };
 
 const nextMonth = () => {
@@ -75,12 +79,31 @@ const nextMonth = () => {
   } else {
     month.value++;
   }
+  emit('dateChange', { month: month.value, year: year.value })
 };
 
-const emit = defineEmits(['dateClick'])
+const emit = defineEmits(['dateClick', 'dateChange'])
 const handleDate = (date: DateProp) => {
   emit('dateClick', date)
 }
+
+// 键盘事件
+const keydown = (event: KeyboardEvent) => {
+  switch (event.key) {
+    case 'ArrowLeft':
+      prevMonth();
+      break;
+    case 'ArrowRight':
+      nextMonth();
+      break;
+  }
+}
+onMounted(() => {
+  document.addEventListener('keydown', keydown); // 监听键盘按键
+});
+onUnmounted(() => {
+  document.removeEventListener('keydown', keydown); // 移除键盘按键监听
+});
 
 </script>
 
@@ -99,7 +122,7 @@ const handleDate = (date: DateProp) => {
       <div v-for="day in daysOfWeek" :key="day" class="text-center font-bold">{{ day }}</div>
 
       <!-- Dates -->
-      <div v-for="date in dates()" :key="date.date" class="text-center flex justify-center">
+      <div v-for="date in dates()" :key="date.key" class="text-center flex justify-center">
         <div class="group cursor-pointer border border-gray-700 rounded-sm p-2 w-20 h-20"
              :class="{ 'bg-sky-800 border-0': date.isToday }" @click="handleDate(date)">
           <div class="group-hover:text-sky-400">
