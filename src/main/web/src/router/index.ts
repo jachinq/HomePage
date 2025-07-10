@@ -27,29 +27,23 @@ watch(()=> state.config, (value)=>{
     if (value) setBgUrl()
 })
 
-const setBgUrl = () => {
-    // 判断一下地址是否为内网地址
-    const url = new URL(window.location.href);
-    console.log(router.currentRoute.value);
-
-    if (url.pathname !== '/') {
+const setBgUrl = (pathname: string = window.location.pathname) => {
+    const defaultBg = () => {
         document.body.style.backgroundImage = 'linear-gradient(to bottom, #020917, #101725)'
-    } else if (state.config?.bgUrl){
+    }
+    // 判断一下地址是否为内网地址
+    if (pathname !== '/') {
+        defaultBg();
+    } else if (state.config?.bgUrl) {
         document.body.style.backgroundImage = `url(${state.config?.bgUrl})`
-        console.log("$$$$$$$$ ", {
-            bgUrl: state.config?.bgUrl,
-            url
-        })
+    } else {
+        defaultBg();
     }
 }
 
 router.beforeEach((to, _from, next) => {
     if (typeof to.name === "string") document.title = to.name;
-    if (to.path !== '/') {
-        document.body.style.backgroundImage = 'linear-gradient(to bottom, #020917, #101725)'
-    } else if (state.config?.bgUrl){
-        document.body.style.backgroundImage = `url(${state.config?.bgUrl})`
-    }
+    setBgUrl(to.path);
     next()
 })
 
