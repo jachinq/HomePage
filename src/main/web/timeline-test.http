@@ -1,0 +1,105 @@
+### Timeline API 测试文件
+
+### 1. 保存时间线事件
+POST http://localhost:8080/api/timeline/save
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN
+
+{
+    "title": "大学毕业",
+    "description": "从北京大学计算机科学与技术专业毕业，获得学士学位",
+    "eventDate": "2020-06-15",
+    "eventTime": "10:00",
+    "category": "教育",
+    "priority": "high",
+    "tags": "毕业,学位,北京大学",
+    "isPublic": false
+}
+
+### 2. 获取时间线列表
+GET http://localhost:8080/api/timeline/list
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 3. 分页获取时间线列表
+GET http://localhost:8080/api/timeline/list/0/10
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 4. 根据ID获取时间线详情
+GET http://localhost:8080/api/timeline/1
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 5. 删除时间线事件
+DELETE http://localhost:8080/api/timeline/1
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 6. 根据日期范围查询时间线
+GET http://localhost:8080/api/timeline/date-range?startDate=2020-01-01&endDate=2020-12-31
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 7. 根据分类查询时间线
+GET http://localhost:8080/api/timeline/category/教育
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 8. 根据优先级查询时间线
+GET http://localhost:8080/api/timeline/priority/high
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 9. 根据标题关键词搜索时间线
+GET http://localhost:8080/api/timeline/search?keyword=毕业
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 10. 获取用户的所有分类
+GET http://localhost:8080/api/timeline/categories
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 11. 获取用户的时间线统计信息
+GET http://localhost:8080/api/timeline/statistics
+Authorization: Bearer YOUR_JWT_TOKEN
+
+### 12. 批量保存时间线事件示例
+POST http://localhost:8080/api/timeline/save
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN
+
+{
+    "title": "开始工作",
+    "description": "加入阿里巴巴担任Java开发工程师",
+    "eventDate": "2020-07-01",
+    "eventTime": "09:00",
+    "category": "职业",
+    "priority": "high",
+    "tags": "工作,阿里巴巴,Java",
+    "isPublic": false
+}
+
+### 13. 保存个人成就事件
+POST http://localhost:8080/api/timeline/save
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN
+
+{
+    "title": "技术分享",
+    "description": "在公司技术大会上分享《微服务架构实践》",
+    "eventDate": "2021-03-15",
+    "eventTime": "14:00",
+    "category": "成就",
+    "priority": "medium",
+    "tags": "分享,微服务,架构",
+    "isPublic": true
+}
+
+### 14. 保存生活事件
+POST http://localhost:8080/api/timeline/save
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN
+
+{
+    "title": "结婚纪念",
+    "description": "与爱人在三亚举行了浪漫的婚礼",
+    "eventDate": "2021-10-01",
+    "eventTime": "18:00",
+    "category": "生活",
+    "priority": "high",
+    "tags": "结婚,三亚,婚礼",
+    "isPublic": false
+} 
