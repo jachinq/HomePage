@@ -1,14 +1,8 @@
 package com.home.homepage.jwt;
 
-import com.home.homepage.entity.User;
-import com.home.homepage.service.UserService;
-import com.home.homepage.utils.Result;
-import io.jsonwebtoken.JwtException;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +10,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.home.homepage.entity.User;
+import com.home.homepage.service.UserService;
+import com.home.homepage.utils.Result;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Jachin
@@ -89,6 +93,24 @@ public class AuthController {
 //            throw new Exception("token is invalid. token=" + token);
         }
         return Result.error(401, "token 失效，请重新登录");
+    }
+
+    // 获取token过期时间
+    @PostMapping("/expiration")
+    public Result getTokenExpiration(@RequestBody AuthResponse tokenRequest) {
+        String token = tokenRequest.getToken();
+        try {
+            Date expiration = jwtUtil.extractExpiration(token);
+            
+            // 格式化日期
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String formattedExpiration = dateFormat.format(expiration);
+            
+            return Result.success("获取token过期时间成功", formattedExpiration);
+        } catch (Exception e) {
+            log.error("获取token过期时间失败: ", e);
+            return Result.error(400, "无效的token");
+        }
     }
 
     @Data

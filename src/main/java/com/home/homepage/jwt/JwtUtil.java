@@ -1,29 +1,29 @@
 package com.home.homepage.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 @Component
 public class JwtUtil {
 
-    // 密钥
-    // 注意：生产环境中，请不要使用默认的密钥，请使用自己生成的密钥
+    // 密钥，可以通过配置文件指定，否则使用默认
     @Value("${jwt.secret:oXjZzGk4-ANmxMzqm-q4fqYiQk-G2fxJBTD-um5MhNhe-oF8ZQY2g-YrDf8aYJ-2nkJDqCm}")
     private String secret;
 
-    // 过期时间：10天
-    @Value("${jwt.expiration:86400000}")
+    // 过期时间：30天，可以通过配置文件指定
+    @Value("${jwt.expiration:2592000000}")
     private Long expiration;
 
     private Key getSigningKey() {
