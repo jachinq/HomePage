@@ -28,7 +28,7 @@ const closeConfigModal = (data: any = {}) => {
 const getConfig = async () => {
   const result = await getAppConfig();
   if (result.success) {
-    configData.value = result.data;
+    configData.value = result.data || {};
 
     // 判断一下地址是否为内网地址
     const url = new URL(window.location.href);
