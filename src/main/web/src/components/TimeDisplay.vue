@@ -1,6 +1,9 @@
 <template>
-  <span class="text-gray-300 font-mono font-bold text-6xl w-full h-full flex justify-center items-center text-center" :class="customClass">{{ formattedTime }}</span>
-  <span class="text-2xl text-gray-300 font-bold w-full flex justify-center items-center text-center mt-1" :class="customDateClass">{{ formattedDate }}</span>
+  <span
+    class="time text-gray-300 font-mono font-bold text-7xl w-full h-full flex justify-center items-center text-center"
+    :class="customClass">{{ formattedTime }}</span>
+  <span class="date text-2xl text-gray-300 font-bold w-full flex justify-center items-center text-center mt-1 rounded-full px-4 py-2"
+    :class="customDateClass">{{ formattedDate }}</span>
 </template>
 
 <script setup lang="ts">
@@ -55,7 +58,7 @@ const formattedDate = computed(() => {
 const time = ref(new Date())
 const timeInterval = ref()
 onMounted(() => {
-  timeInterval.value = setInterval(() => {  
+  timeInterval.value = setInterval(() => {
     time.value = new Date()
   }, 1000)
 })
@@ -66,7 +69,21 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-span {
+.time {
   -webkit-text-stroke: 1px black;
 }
-</style> 
+
+.date,
+.time {
+  font-family: verdana, sans-serif;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 3.2pt;
+  word-spacing: 5.4pt;
+  line-height: 1;
+}
+
+.date {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+</style>
