@@ -46,5 +46,12 @@ export default {
             },
             body: JSON.stringify(data),
         });
+    },
+
+    delete: (url: string, headers: any = {}) => {
+        return fetch(procUrl(url), {
+            method: 'DELETE',
+            headers: {...procHeaders(url, headers)},
+        });
     }
 }

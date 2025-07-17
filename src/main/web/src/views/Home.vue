@@ -108,6 +108,8 @@ const selectedClass = (index: number) => {
             @click="$router.push('/app')">应用</span>
       <span class="text-center text-sm text-gray-400 cursor-pointer hover:underline"
             @click="$router.push('/habit')">习惯</span>
+      <span class="text-center text-sm text-gray-400 cursor-pointer hover:underline"
+            @click="$router.push('/timeline')">时间线</span>
     </div>
 
     <div class="my-2 flex w-full h-full text-center justify-center items-center">

@@ -4,6 +4,7 @@ import AppSet from '../views/appset/AppSet.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Habit from '../views/habit/Habit.vue'
+import Timeline from '../views/timeline/Timeline.vue'
 import User from '@/views/User.vue'
 import {useGlobalConfigStore} from "@/stores/useGlobalConfigStore.ts";
 import {watch} from "vue";
@@ -14,6 +15,7 @@ const routes = [
     {path: '/register', name: '注册', component: Register},
     {path: '/app', name: '应用', component: AppSet},
     {path: '/habit', name: '习惯', component: Habit},
+    {path: '/timeline', name: '时间线', component: Timeline},
     {path: '/user', name: '用户', component: User},
 ]
 
