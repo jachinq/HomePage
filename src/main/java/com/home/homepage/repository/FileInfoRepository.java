@@ -47,4 +47,9 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, Long> {
      * 根据ID和用户ID查询文件
      */
     Optional<FileInfo> findByIdAndUserIdAndIsActiveTrue(Long id, Long userId);
+
+    /**
+     * 根据ID查询文件
+     */
+    Optional<FileInfo> findByIdAndIsActiveTrue(Long id);
 } 

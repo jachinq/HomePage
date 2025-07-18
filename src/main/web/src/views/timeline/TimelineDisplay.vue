@@ -7,7 +7,7 @@
           ✨ 时间线展示
         </h1>
         <p class="text-gray-400 text-lg">记录人生中的重要时刻</p>
-        
+
         <!-- 统计信息 -->
         <div v-if="statistics" class="flex justify-center gap-8 mt-8">
           <div class="text-center">
@@ -30,90 +30,90 @@
         <div class="flex flex-wrap gap-4 items-center justify-center">
           <div class="flex items-center gap-2">
             <label class="text-gray-300 text-sm">分类:</label>
-            <select v-model="selectedCategory" 
-                    class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-sky-500 focus:outline-none transition-colors">
+            <select v-model="selectedCategory"
+              class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-sky-500 focus:outline-none transition-colors">
               <option value="">全部分类</option>
               <option v-for="category in categories" :key="category" :value="category">
                 {{ category }}
               </option>
             </select>
           </div>
-          
+
           <div class="flex items-center gap-2">
             <label class="text-gray-300 text-sm">优先级:</label>
-            <select v-model="selectedPriority" 
-                    class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-sky-500 focus:outline-none transition-colors">
+            <select v-model="selectedPriority"
+              class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-sky-500 focus:outline-none transition-colors">
               <option value="">全部优先级</option>
               <option value="high">🔴 高</option>
               <option value="medium">🟡 中</option>
               <option value="low">🟢 低</option>
             </select>
           </div>
-          
+
           <div class="flex items-center gap-2">
             <label class="text-gray-300 text-sm">排序:</label>
-            <select v-model="sortBy" 
-                    class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-sky-500 focus:outline-none transition-colors">
+            <select v-model="sortBy"
+              class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-sky-500 focus:outline-none transition-colors">
               <option value="eventDate">按事件日期</option>
               <option value="createTime">按创建时间</option>
               <option value="priority">按优先级</option>
             </select>
           </div>
-          
-          <button @click="toggleSortDirection" 
-                  class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors">
+
+          <button @click="toggleSortDirection"
+            class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors">
             {{ sortDirection === 'asc' ? '📈 升序' : '📉 降序' }}
           </button>
 
-          
-          <button @click="showTimelineManager" 
-                  class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors">
+
+          <button @click="showTimelineManager"
+            class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors">
             管理时间线
           </button>
 
-          
+
         </div>
       </div>
 
       <!-- 时间线容器 -->
       <div class="relative">
         <!-- 垂直时间线 -->
-        <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-sky-500 via-purple-500 to-pink-500 rounded-full"></div>
-        
+        <div
+          class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-sky-500 via-purple-500 to-pink-500 rounded-full">
+        </div>
+
         <!-- 时间线事件 -->
-        <div v-if="filteredAndSortedTimelines.length === 0" 
-             class="text-center py-20">
+        <div v-if="filteredAndSortedTimelines.length === 0" class="text-center py-20">
           <div class="text-6xl mb-4">📅</div>
           <p class="text-gray-400 text-xl">暂无时间线事件</p>
           <p class="text-gray-500 text-sm mt-2">开始记录您的重要时刻吧</p>
         </div>
-        
+
         <div v-else class="space-y-8">
-          <div v-for="(timeline, index) in filteredAndSortedTimelines" 
-               :key="timeline.id"
-               class="relative"
-               :class="index % 2 === 0 ? 'md:pr-1/2' : 'md:pl-1/2 md:text-right'">
-            
+          <div v-for="(timeline, index) in filteredAndSortedTimelines" :key="timeline.id" class="relative"
+            :class="index % 2 === 0 ? 'md:pr-1/2' : 'md:pl-1/2 md:text-right'">
+
             <!-- 时间线节点 -->
-            <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white shadow-lg z-10"
-                 :class="getPriorityNodeColor(timeline.priority)">
+            <div
+              class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white shadow-lg z-10"
+              :class="getPriorityNodeColor(timeline.priority)">
             </div>
-            
+
             <!-- 事件卡片 -->
-            <div class="timeline-card group"
-                 :class="index % 2 === 0 ? 'md:mr-8' : 'md:ml-8'"
-                 @click="selectTimeline(timeline)">
-              
+            <div class="timeline-card group" :class="index % 2 === 0 ? 'md:mr-8' : 'md:ml-8'"
+              @click="selectTimeline(timeline)">
+
               <!-- 卡片内容 -->
-              <div class="bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 hover:border-sky-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer">
-                
+              <div
+                class="bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 hover:border-sky-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer">
+
                 <!-- 卡片头部 -->
                 <div class="flex items-start justify-between mb-4">
                   <div class="flex-1">
                     <h3 class="text-xl font-bold text-white mb-2 group-hover:text-sky-400 transition-colors">
                       {{ timeline.title }}
                     </h3>
-                    
+
                     <div class="flex items-center gap-3 text-sm text-gray-400">
                       <span class="flex items-center gap-1">
                         📅 {{ formatDate(timeline.eventDate) }}
@@ -123,43 +123,42 @@
                       </span>
                     </div>
                   </div>
-                  
+
                   <!-- 优先级标签 -->
-                  <div v-if="timeline.priority" 
-                       class="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
-                       :class="getPriorityBadgeColor(timeline.priority)">
+                  <div v-if="timeline.priority"
+                    class="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
+                    :class="getPriorityBadgeColor(timeline.priority)">
                     {{ getPriorityIcon(timeline.priority) }}
                     {{ getPriorityText(timeline.priority) }}
                   </div>
                 </div>
-                
+
                 <!-- 描述内容 -->
                 <div v-if="timeline.description" class="mb-4">
                   <p class="text-gray-300 leading-relaxed">
                     {{ timeline.description }}
                   </p>
                 </div>
-                
+
                 <!-- 分类和标签 -->
                 <div class="flex flex-wrap gap-2 mb-4">
-                  <span v-if="timeline.category" 
-                        class="px-3 py-1 bg-sky-900/50 text-sky-300 text-xs rounded-full border border-sky-800">
+                  <span v-if="timeline.category"
+                    class="px-3 py-1 bg-sky-900/50 text-sky-300 text-xs rounded-full border border-sky-800">
                     🏷️ {{ timeline.category }}
                   </span>
-                  
-                  <span v-for="tag in parseTags(timeline.tags)" 
-                        :key="tag"
-                        class="px-3 py-1 bg-purple-900/50 text-purple-300 text-xs rounded-full border border-purple-800">
+
+                  <span v-for="tag in parseTags(timeline.tags)" :key="tag"
+                    class="px-3 py-1 bg-purple-900/50 text-purple-300 text-xs rounded-full border border-purple-800">
                     # {{ tag }}
                   </span>
                 </div>
-                
+
                 <!-- 卡片底部 -->
                 <div class="flex items-center justify-between text-xs text-gray-500">
                   <span v-if="timeline.createTime">
                     创建于 {{ formatDateTime(timeline.createTime) }}
                   </span>
-                  
+
                   <div class="flex items-center gap-2">
                     <span v-if="timeline.isPublic" class="flex items-center gap-1 text-green-400">
                       🌐 公开
@@ -188,13 +187,10 @@
         <p class="text-white">加载中...</p>
       </div>
     </div>
-    
+
     <!-- 详情模态框 -->
-    <TimelineDetailModal 
-      :open="showDetailModal" 
-      :timeline="selectedTimelineData"
-      @close="closeDetailModal"
-    />
+    <FilePreview :visible="showDetailModal" :fileIds="parseAttachments(selectedTimelineData)"
+      @close="closeDetailModal" />
   </div>
 </template>
 
@@ -203,8 +199,9 @@ import { ref, onMounted, computed } from 'vue';
 import { TimelineEntity, TimelineStatistics } from '../../interface/timeline';
 import { getTimelineList, getTimelineStatistics, getTimelineCategories } from '../../api/timelineApi';
 import BackToHome from '../../components/BackToHome.vue';
-import TimelineDetailModal from './TimelineDetailModal.vue';
 import router from '@/router';
+import FilePreview from '@/components/FilePreview.vue';
+import { useToast } from '@/components/toast';
 
 // 响应式数据
 const timelines = ref<TimelineEntity[]>([]);
@@ -221,21 +218,21 @@ const selectedTimelineData = ref<TimelineEntity>({});
 // 计算属性
 const filteredAndSortedTimelines = computed(() => {
   let filtered = timelines.value;
-  
+
   // 过滤分类
   if (selectedCategory.value) {
     filtered = filtered.filter(t => t.category === selectedCategory.value);
   }
-  
+
   // 过滤优先级
   if (selectedPriority.value) {
     filtered = filtered.filter(t => t.priority === selectedPriority.value);
   }
-  
+
   // 排序
   filtered = filtered.sort((a, b) => {
     let aValue, bValue;
-    
+
     switch (sortBy.value) {
       case 'eventDate':
         aValue = new Date(a.eventDate || '').getTime();
@@ -254,10 +251,10 @@ const filteredAndSortedTimelines = computed(() => {
         aValue = 0;
         bValue = 0;
     }
-    
+
     return sortDirection.value === 'asc' ? aValue - bValue : bValue - aValue;
   });
-  
+
   return filtered;
 });
 
@@ -306,14 +303,31 @@ const toggleSortDirection = () => {
   sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
 };
 
+const toast = useToast();
 const selectTimeline = (timeline: TimelineEntity) => {
   selectedTimelineData.value = timeline;
-  showDetailModal.value = true;
+  if (selectedTimelineData.value.attachments) {
+    showDetailModal.value = true;
+  } else {
+    toast?.warning("没有附件")
+  }
 };
 
 const closeDetailModal = () => {
   showDetailModal.value = false;
   selectedTimelineData.value = {};
+};
+
+// 解析附件信息
+const parseAttachments = (timeline?: TimelineEntity): number[] => {
+  if (!timeline) return [];
+  if (!timeline.attachments) return [];
+
+  console.log("click card", timeline.attachments)
+  // 假设附件格式为逗号分隔的文件名
+  return timeline.attachments.split(',')
+    .map(id => parseInt(id))
+    .filter(id => !isNaN(id));
 };
 
 // 工具方法
@@ -394,6 +408,7 @@ onMounted(() => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -407,4 +422,4 @@ onMounted(() => {
     text-align: left !important;
   }
 }
-</style> 
+</style>

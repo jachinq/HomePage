@@ -3,14 +3,17 @@ package com.home.homepage.handle.exp;
 import com.home.homepage.utils.Result;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.sqlite.SQLiteException;
 
 import javax.naming.AuthenticationException;
@@ -22,7 +25,7 @@ import javax.naming.AuthenticationException;
  * @since 25-06-18 14:59
  */
 @Slf4j
-@RestControllerAdvice
+@ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SpecificExceptionHandler {
     private String getPath(WebRequest webRequest) {
@@ -55,5 +58,15 @@ public class SpecificExceptionHandler {
     public Result HttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex, WebRequest request) {
         log.error("{}; {}", getPath(request), ex.getMessage(), ex);
         return Result.error(400, "请求类型不支持" + ex.getMessage());
+    }
+
+    // 从配置文件中获取生产环境域名
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String maxSize;
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public Result handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, WebRequest request) {
+        log.error("{}; {}", getPath(request), ex.getMessage(), ex);
+        return Result.error(400, "文件太大，超过" + maxSize);
     }
 }

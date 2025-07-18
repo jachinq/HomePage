@@ -113,7 +113,7 @@ const uploadFileList = async () => {
     }
   } catch (error) {
     console.error('文件上传失败:', error);
-    toast?.error('文件上传失败');
+    toast?.error('文件上传失败:' + error);
   } finally {
     uploading.value = false;
   }

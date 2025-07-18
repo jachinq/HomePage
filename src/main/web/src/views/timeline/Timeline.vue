@@ -126,26 +126,6 @@ const handleDeleteSuccess = (success?: boolean) => {
   }
 };
 
-// 获取优先级的颜色
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'high': return 'text-red-500';
-    case 'medium': return 'text-yellow-500';
-    case 'low': return 'text-green-500';
-    default: return 'text-gray-500';
-  }
-};
-
-// 获取优先级的文本
-const getPriorityText = (priority: string) => {
-  switch (priority) {
-    case 'high': return '高';
-    case 'medium': return '中';
-    case 'low': return '低';
-    default: return '';
-  }
-};
-
 onMounted(() => {
   fetchTimelines();
   fetchCategories();

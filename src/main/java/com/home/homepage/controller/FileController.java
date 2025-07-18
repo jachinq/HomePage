@@ -27,7 +27,6 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/file")
 public class FileController {
 
     private final FileService fileService;
@@ -40,7 +39,7 @@ public class FileController {
     /**
      * 上传文件
      */
-    @PostMapping("/upload")
+    @PostMapping("/api/file/upload")
     public Result uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "description", required = false) String description) {
@@ -52,7 +51,7 @@ public class FileController {
     /**
      * 下载文件
      */
-    @GetMapping("/download/{fileId}")
+    @GetMapping("/file/download/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable Long fileId) {
         try {
             Resource resource = fileService.getFileResource(fileId);
@@ -81,7 +80,7 @@ public class FileController {
     /**
      * 预览文件
      */
-    @GetMapping("/preview/{fileId}")
+    @GetMapping(value = "/file/preview/{fileId}")
     public ResponseEntity<Resource> previewFile(@PathVariable Long fileId) {
         try {
             Resource resource = fileService.getFileResource(fileId);
@@ -111,7 +110,7 @@ public class FileController {
     /**
      * 获取文件信息
      */
-    @GetMapping("/info/{fileId}")
+    @GetMapping("/api/file/info/{fileId}")
     public Result getFileInfo(@PathVariable Long fileId) {
         FileInfo fileInfo = fileService.getFileInfo(fileId);
         if (fileInfo == null) {
@@ -123,7 +122,7 @@ public class FileController {
     /**
      * 获取文件列表
      */
-    @GetMapping("/list")
+    @GetMapping("/api/file/list")
     public Result getFileList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -135,7 +134,7 @@ public class FileController {
     /**
      * 删除文件
      */
-    @DeleteMapping("/{fileId}")
+    @DeleteMapping("/api/file/{fileId}")
     public Result deleteFile(@PathVariable Long fileId) {
         return fileService.deleteFile(fileId);
     }
@@ -143,7 +142,7 @@ public class FileController {
     /**
      * 更新文件信息
      */
-    @PutMapping("/{fileId}")
+    @PutMapping("/api/file/{fileId}")
     public Result updateFileInfo(
             @PathVariable Long fileId,
             @RequestParam(required = false) String description) {
@@ -154,7 +153,7 @@ public class FileController {
     /**
      * 批量上传文件
      */
-    @PostMapping("/batch-upload")
+    @PostMapping("/api/file/batch-upload")
     public Result batchUploadFiles(
             @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "description", required = false) String description) {

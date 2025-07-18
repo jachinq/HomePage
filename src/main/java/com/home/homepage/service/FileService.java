@@ -128,7 +128,7 @@ public class FileService {
      */
     public Resource getFileResource(Long fileId) {
         try {
-            Optional<FileInfo> fileInfoOpt = fileInfoRepository.findByIdAndUserIdAndIsActiveTrue(fileId, Core.getUid());
+            Optional<FileInfo> fileInfoOpt = fileInfoRepository.findByIdAndIsActiveTrue(fileId);
             if (fileInfoOpt.isEmpty()) {
                 return null;
             }

@@ -23,16 +23,6 @@ public class FileConfig {
     private String path;
 
     /**
-     * 单个文件最大大小
-     */
-    private String maxSize;
-
-    /**
-     * 请求最大大小
-     */
-    private String maxRequestSize;
-
-    /**
      * 允许的文件类型
      */
     private List<String> allowedTypes;

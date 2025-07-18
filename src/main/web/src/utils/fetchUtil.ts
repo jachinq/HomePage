@@ -5,7 +5,7 @@ const isDev = process.env.NODE_ENV === 'development';
 // console.log('isDev:', isDev);
 
 // 根据环境变量判断请求地址
-function procUrl(url: string): string {
+export function procUrl(url: string): string {
     if (isDev) {
         return 'http://127.0.0.1:8080' + url;
     }
