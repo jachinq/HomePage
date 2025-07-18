@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
+  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 py-8">
     <div class="max-w-6xl mx-auto">
       <!-- 头部区域 -->
       <div class="text-center mb-12">
@@ -76,7 +76,7 @@
           </button>
 
 
-          <button @click="showTimelineManager"
+          <button @click="$router.push('/timeline/manager')"
             class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors">
             管理时间线
           </button>
@@ -215,7 +215,6 @@ import { ref, onMounted, computed } from 'vue';
 import { TimelineEntity, TimelineStatistics } from '../../interface/timeline';
 import { getTimelineList, getTimelineStatistics, getTimelineCategories } from '../../api/timelineApi';
 import BackToHome from '../../components/BackToHome.vue';
-import router from '@/router';
 import FilePreview from '@/components/FilePreview.vue';
 import { useToast } from '@/components/toast';
 
@@ -411,10 +410,6 @@ const formatDate = (date?: string) => {
 //   if (!dateTime) return '';
 //   return new Date(dateTime).toLocaleString('zh-CN');
 // };
-
-const showTimelineManager = () => {
-  router.push('/timeline/manager');
-}
 
 // 生命周期
 onMounted(() => {

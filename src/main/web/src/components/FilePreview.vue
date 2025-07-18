@@ -2,7 +2,7 @@
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4" v-if="isVisible"
     @click="handleBackgroundClick">
     <div
-      class="relative max-w-7xl max-h-screen w-full h-full rounded-lg overflow-hidden shadow-2xl flex flex-col"
+      class="relative max-w-7xl max-h-screen w-full h-full rounded-lg overflow-hidden shadow-2xl flex flex-col select-none"
       @click.stop>
       <!-- 顶部工具栏 -->
       <div class="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">

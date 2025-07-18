@@ -7,7 +7,7 @@ import FormItem from '../../components/form/FormItem.vue';
 import FormInput from '../../components/form/FormInput.vue';
 import FormRadio, { Option } from '../../components/form/FormRadio.vue';
 import { preProcFormData } from '../../utils/commUtil';
-import { uploadFiles, FileInfo, getFileInfo, deleteFile } from '../../api/fileApi';
+import { uploadFiles, FileInfo, deleteFile, getFileListInIds } from '../../api/fileApi';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -44,7 +44,7 @@ const priorityOptions: Option[] = [
 
 // 常用分类选项
 const categoryOptions = [
-  '工作', '学习', '生活', '旅行', '健康', '家庭', 
+  '工作', '学习', '生活', '旅行', '健康', '家庭',
   '朋友', '成就', '纪念', '其他'
 ];
 
@@ -54,19 +54,19 @@ const validateForm = () => {
     toast?.error('事件标题不能为空');
     return false;
   }
-  
+
   if (!formData.value.eventDate) {
     toast?.error('事件日期不能为空');
     return false;
   }
-  
+
   // 验证日期格式
   const datePattern = /^\d{4}-\d{2}-\d{2}$/;
   if (!datePattern.test(formData.value.eventDate)) {
     toast?.error('日期格式不正确');
     return false;
   }
-  
+
   // 验证时间格式（如果有）
   if (formData.value.eventTime) {
     const timePattern = /^\d{2}:\d{2}$/;
@@ -75,7 +75,7 @@ const validateForm = () => {
       return false;
     }
   }
-  
+
   return true;
 };
 
@@ -90,7 +90,7 @@ const handleFileSelect = (event: Event) => {
 // 上传文件
 const uploadFileList = async () => {
   if (selectedFiles.value.length === 0) return;
-  
+
   uploading.value = true;
   try {
     const formData = new FormData();
@@ -100,7 +100,7 @@ const uploadFileList = async () => {
     formData.append("description", "upload files");
 
     // console.log("upload", formData, selectedFiles.value)
-    
+
     const result = await uploadFiles(formData);
     if (result.success) {
       uploadedFiles.value = [...uploadedFiles.value, ...result.data.success];
@@ -151,37 +151,38 @@ const formatFileSize = (bytes: number): string => {
 // 解析已存在的附件
 const parseExistingAttachments = async () => {
   if (!formData.value.attachments) return;
-  
+
   const fileIds = formData.value.attachments.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-  
-  for (const fileId of fileIds) {
-    try {
-      const result = await getFileInfo(fileId);
-      if (result.success) {
-        uploadedFiles.value.push(result.data);
-      }
-    } catch (error) {
-      console.error('获取文件信息失败:', error);
+
+  try {
+    const result = await getFileListInIds(fileIds);
+    if (result.success) {
+      result.data?.forEach((file: FileInfo) => {
+        if (uploadedFiles.value.some(f => f.id === file.id)) return;
+        uploadedFiles.value.push(file);
+      });
     }
+  } catch (error) {
+    console.error('获取文件信息失败:', error);
   }
 };
 
 // 提交表单
 const onSubmit = async () => {
   if (!validateForm()) return;
-  
+
   try {
     // 处理表单数据
     const submitData = { ...formData.value };
-    
+
     // 处理附件：将上传的文件ID以逗号分隔的形式保存
     if (uploadedFiles.value.length > 0) {
       submitData.attachments = uploadedFiles.value.map(file => file.id).join(',');
     }
-    
+
     // 清理空字段
     preProcFormData(submitData);
-    
+
     // 处理标签（去重和格式化）
     if (submitData.tags) {
       const tags = submitData.tags.split(',')
@@ -190,9 +191,9 @@ const onSubmit = async () => {
         .filter((tag, index, arr) => arr.indexOf(tag) === index);
       submitData.tags = tags.join(',');
     }
-    
+
     const result = await saveTimeline(submitData);
-    
+
     if (result.success) {
       toast?.success(props.openModal.add ? '创建成功' : '更新成功');
       emit('close', true);
@@ -242,161 +243,99 @@ watch(() => props.openModal, (newModal) => {
 
 <template>
   <div>
-    <SaveModal 
-      name="时间线事件" 
-      :open-modal="openModal" 
-      @on-submit="onSubmit" 
-      @on-close="onCancel"
-      :show-delete="false"
-    >
+    <SaveModal name="时间线事件" :open-modal="openModal" @on-submit="onSubmit" @on-close="onCancel" :show-delete="false">
       <template #form>
         <!-- 标题 -->
         <FormItem label="事件标题" required>
-          <FormInput 
-            v-model="formData.title" 
-            placeholder="请输入事件标题"
-            maxlength="200"
-          />
+          <FormInput v-model="formData.title" placeholder="请输入事件标题" maxlength="200" />
         </FormItem>
 
         <!-- 描述 -->
         <FormItem label="事件描述">
-          <FormInput 
-            v-model="formData.description" 
-            placeholder="请详细描述这个事件"
-            type="textarea"
-            rows="4"
-          />
+          <FormInput v-model="formData.description" placeholder="请详细描述这个事件" type="textarea" rows="4" />
         </FormItem>
 
         <!-- 日期和时间 -->
         <FormItem label="事件日期" required>
-          <FormInput 
-            v-model="formData.eventDate" 
-            type="date"
-            width="1/2"
-          />
-          <FormInput 
-            v-model="formData.eventTime" 
-            type="time"
-            placeholder="选择时间（可选）"
-            width="1/2"
-          />
+          <FormInput v-model="formData.eventDate" type="date" width="1/2" />
+          <FormInput v-model="formData.eventTime" type="time" placeholder="选择时间（可选）" width="1/2" />
         </FormItem>
 
         <!-- 分类 -->
         <FormItem label="事件分类">
           <div class="flex flex-wrap gap-2 mb-2">
-            <button
-              v-for="category in categoryOptions"
-              :key="category"
-              type="button"
-              @click="formData.category = category"
-              :class="[
+            <button v-for="category in categoryOptions" :key="category" type="button"
+              @click="formData.category = category" :class="[
                 'px-3 py-1 rounded text-sm transition-colors',
-                formData.category === category 
-                  ? 'bg-blue-500 text-white' 
+                formData.category === category
+                  ? 'bg-blue-500 text-white'
                   : 'bg-gray-600 text-gray-200 hover:bg-gray-500'
-              ]"
-            >
+              ]">
               {{ category }}
             </button>
           </div>
-          <FormInput 
-            v-model="formData.category" 
-            placeholder="或输入自定义分类"
-            maxlength="50"
-          />
+          <FormInput v-model="formData.category" placeholder="或输入自定义分类" maxlength="50" />
         </FormItem>
 
         <!-- 优先级 -->
         <FormItem label="优先级">
-          <FormRadio 
-            v-model="formData.priority" 
-            :options="priorityOptions"
-          />
+          <FormRadio v-model="formData.priority" :options="priorityOptions" />
         </FormItem>
 
         <!-- 标签 -->
         <FormItem label="标签">
-          <FormInput 
-            v-model="formData.tags" 
-            placeholder="多个标签用逗号分隔，如：工作,重要,项目"
-            maxlength="500"
-          />
+          <FormInput v-model="formData.tags" placeholder="多个标签用逗号分隔，如：工作,重要,项目" maxlength="500" />
         </FormItem>
 
         <!-- 附件 -->
         <FormItem label="附件">
           <!-- 文件选择 -->
           <div class="mb-4">
-            <input 
-              type="file" 
-              multiple 
-              @change="handleFileSelect"
+            <input type="file" multiple @change="handleFileSelect"
               class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-500 file:text-white hover:file:bg-blue-600"
-              accept="*/*"
-            />
+              accept="*/*" />
           </div>
-          
+
           <!-- 选中的文件列表 -->
           <div v-if="selectedFiles.length > 0" class="mb-4">
             <div class="flex items-center justify-between mb-2">
               <span class="text-sm font-medium text-gray-300">待上传文件：</span>
-              <button 
-                type="button"
-                @click="uploadFileList"
-                :disabled="uploading"
-                class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:opacity-50"
-              >
+              <button type="button" @click="uploadFileList" :disabled="uploading"
+                class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:opacity-50">
                 {{ uploading ? '上传中...' : '上传文件' }}
               </button>
             </div>
             <div class="space-y-2">
-              <div 
-                v-for="(file, index) in selectedFiles" 
-                :key="index"
-                class="flex items-center justify-between p-2 bg-gray-700 rounded"
-              >
+              <div v-for="(file, index) in selectedFiles" :key="index"
+                class="flex items-center justify-between p-2 bg-gray-700 rounded">
                 <div class="flex items-center">
                   <span class="text-sm text-gray-300">{{ file.name }}</span>
                   <span class="ml-2 text-xs text-gray-500">({{ formatFileSize(file.size) }})</span>
                 </div>
-                <button 
-                  type="button"
-                  @click="removeSelectedFile(index)"
-                  class="text-red-400 hover:text-red-300"
-                >
+                <button type="button" @click="removeSelectedFile(index)" class="text-red-400 hover:text-red-300">
                   ×
                 </button>
               </div>
             </div>
           </div>
-          
+
           <!-- 已上传的文件列表 -->
           <div v-if="uploadedFiles.length > 0" class="mb-4">
             <span class="text-sm font-medium text-gray-300">已上传文件：</span>
             <div class="space-y-2 mt-2">
-              <div 
-                v-for="file in uploadedFiles" 
-                :key="file.id"
-                class="flex items-center justify-between p-2 bg-gray-700 rounded"
-              >
+              <div v-for="file in uploadedFiles" :key="file.id"
+                class="flex items-center justify-between p-2 bg-gray-700 rounded">
                 <div class="flex items-center">
                   <span class="text-sm text-gray-300">{{ file.originalFileName }}</span>
                   <span class="ml-2 text-xs text-gray-500">({{ formatFileSize(file.fileSize) }})</span>
                 </div>
-                <button 
-                  type="button"
-                  @click="removeUploadedFile(file)"
-                  class="text-red-400 hover:text-red-300"
-                >
+                <button type="button" @click="removeUploadedFile(file)" class="text-red-400 hover:text-red-300">
                   删除
                 </button>
               </div>
             </div>
           </div>
-          
+
           <p class="text-xs text-gray-500 mt-2">
             支持多文件上传，文件将以逗号分隔的ID形式保存
           </p>
@@ -406,11 +345,8 @@ watch(() => props.openModal, (newModal) => {
         <FormItem label="公开设置">
           <div class="flex items-center gap-4">
             <label class="flex items-center gap-2 cursor-pointer">
-              <input 
-                type="checkbox" 
-                v-model="formData.isPublic"
-                class="rounded border-gray-600 bg-gray-700 text-blue-500"
-              />
+              <input type="checkbox" v-model="formData.isPublic"
+                class="rounded border-gray-600 bg-gray-700 text-blue-500" />
               <span>公开此事件</span>
             </label>
           </div>
