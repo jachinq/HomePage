@@ -1,0 +1,82 @@
+### 文件服务API测试
+
+### 1. 上传文件
+POST http://localhost:8080/api/file/upload
+Content-Type: multipart/form-data
+Authorization: Bearer {{token}}
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+这是一个测试文件的内容
+--boundary
+Content-Disposition: form-data; name="description"
+
+这是一个测试文件的描述
+--boundary--
+
+### 2. 获取文件列表
+GET http://localhost:8080/api/file/list?page=0&size=10
+Authorization: Bearer {{token}}
+
+### 3. 获取特定类型的文件列表
+GET http://localhost:8080/api/file/list?page=0&size=10&fileType=txt
+Authorization: Bearer {{token}}
+
+### 4. 获取文件信息
+GET http://localhost:8080/api/file/info/1
+Authorization: Bearer {{token}}
+
+### 5. 下载文件
+GET http://localhost:8080/api/file/download/1
+Authorization: Bearer {{token}}
+
+### 6. 预览文件
+GET http://localhost:8080/api/file/preview/1
+Authorization: Bearer {{token}}
+
+### 7. 更新文件信息
+PUT http://localhost:8080/api/file/1?description=更新后的文件描述
+Authorization: Bearer {{token}}
+
+### 8. 删除文件
+DELETE http://localhost:8080/api/file/1
+Authorization: Bearer {{token}}
+
+### 9. 批量上传文件
+POST http://localhost:8080/api/file/batch-upload
+Content-Type: multipart/form-data
+Authorization: Bearer {{token}}
+
+--boundary
+Content-Disposition: form-data; name="files"; filename="test1.txt"
+Content-Type: text/plain
+
+测试文件1的内容
+--boundary
+Content-Disposition: form-data; name="files"; filename="test2.txt"
+Content-Type: text/plain
+
+测试文件2的内容
+--boundary
+Content-Disposition: form-data; name="description"
+
+批量上传的测试文件
+--boundary--
+
+### 10. 上传图片文件
+POST http://localhost:8080/api/file/upload
+Content-Type: multipart/form-data
+Authorization: Bearer {{token}}
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+# 这里应该是真实的图片文件内容
+--boundary
+Content-Disposition: form-data; name="description"
+
+测试图片文件
+--boundary-- 
