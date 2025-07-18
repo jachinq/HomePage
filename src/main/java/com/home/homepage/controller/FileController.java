@@ -132,6 +132,14 @@ public class FileController {
     }
 
     /**
+     * 获取文件列表
+     */
+    @GetMapping("/api/file/listInIds")
+    public Result getFileList(@RequestParam List<Long> ids) {
+        return fileService.getFileList(ids);
+    }
+
+    /**
      * 删除文件
      */
     @DeleteMapping("/api/file/{fileId}")

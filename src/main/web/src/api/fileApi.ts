@@ -52,6 +52,15 @@ export const getFileList = (fileIds: number[]): Promise<Result> => {
       .catch(err => reject(err));
   });
 };
+// 获取文件信息列表
+export const getFileListInIds = (ids: number[]): Promise<Result> => {
+  return new Promise((resolve, reject) => {
+    fetchUtil.get(`/api/file/listInIds`, { ids })
+      .then(res => res.json())
+      .then(res => resolve(res))
+      .catch(err => reject(err));
+  });
+};
 
 // 文件下载地址
 export const getFileDownloadUrl = (fileId: number): string => {

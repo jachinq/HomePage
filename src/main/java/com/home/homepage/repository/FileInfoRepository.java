@@ -52,4 +52,9 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, Long> {
      * 根据ID查询文件
      */
     Optional<FileInfo> findByIdAndIsActiveTrue(Long id);
-} 
+
+    /**
+     * 根据ID列表查询文件
+     */
+    List<FileInfo> findAllByIdIn(List<Long> ids);
+}

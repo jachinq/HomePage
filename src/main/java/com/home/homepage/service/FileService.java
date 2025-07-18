@@ -158,6 +158,15 @@ public class FileService {
     /**
      * 获取用户的文件列表
      */
+    public Result getFileList(List<Long> ids) {
+        try {
+            List<FileInfo> allById = fileInfoRepository.findAllByIdIn(ids);
+            return Result.success(allById);
+        } catch (Exception e) {
+            log.error("<UNK>", e);
+            return Result.error(500, "获取文件列表失败" + e.getMessage());
+        }
+    }
     public Result getFileList(int page, int size, String fileType) {
         try {
             Long userId = Core.getUid();
@@ -166,7 +175,6 @@ public class FileService {
             
             Page<FileInfo> fileInfoPage;
             if (fileType != null && !fileType.trim().isEmpty()) {
-                List<FileInfo> fileInfoList = fileInfoRepository.findAllByFileTypeAndUserIdAndIsActiveTrue(fileType, userId);
                 fileInfoPage = fileInfoRepository.findAllByUserIdAndIsActiveTrue(userId, pageable);
             } else {
                 fileInfoPage = fileInfoRepository.findAllByUserIdAndIsActiveTrue(userId, pageable);
