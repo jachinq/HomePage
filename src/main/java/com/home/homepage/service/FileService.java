@@ -61,10 +61,16 @@ public class FileService {
             String md5 = calculateMD5(file.getBytes());
 
             // 检查是否已存在相同文件
-            Optional<FileInfo> existingFile = fileInfoRepository.findByMd5AndIsActiveTrue(md5);
-            if (existingFile.isPresent() && Objects.equals(existingFile.get().getUserId(), Core.getUid())) {
+            Optional<FileInfo> existingFile = fileInfoRepository.findByMd5AndUserId(md5, Core.getUid());
+            if (existingFile.isPresent()) {
+                FileInfo fileInfo = existingFile.get();
 //                Files.deleteIfExists(filePath); // 删除刚上传的文件
-                return Result.success("文件已存在", existingFile.get());
+                if (!fileInfo.getIsActive()) {
+                    // 修改 isActive 状态
+                    fileInfo.setIsActive(true);
+                    fileInfoRepository.save(fileInfo);
+                }
+                return Result.success("文件已存在", fileInfo);
             }
 
             // 获取文件信息

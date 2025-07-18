@@ -36,7 +36,7 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, Long> {
     /**
      * 根据MD5查询文件
      */
-    Optional<FileInfo> findByMd5AndIsActiveTrue(String md5);
+    Optional<FileInfo> findByMd5AndUserId(String md5,  Long userId);
 
     /**
      * 根据文件类型查询文件
