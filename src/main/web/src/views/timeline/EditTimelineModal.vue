@@ -2,20 +2,17 @@
 import { ref, watch, getCurrentInstance } from 'vue';
 import { TimelineEntity } from '../../interface/timeline.ts';
 import { saveTimeline } from '../../api/timelineApi.ts';
-import SaveModal from '../../components/SaveModal.vue';
+import SaveModal, { OpenModal } from '../../components/SaveModal.vue';
 import FormItem from '../../components/form/FormItem.vue';
 import FormInput from '../../components/form/FormInput.vue';
-import FormRadio from '../../components/form/FormRadio.vue';
+import FormRadio, { Option } from '../../components/form/FormRadio.vue';
 import { preProcFormData } from '../../utils/commUtil.ts';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
 
 const props = defineProps<{
-  openModal: {
-    add: boolean;
-    edit: boolean;
-  };
+  openModal: OpenModal;
   oldData: TimelineEntity;
 }>();
 
@@ -33,10 +30,10 @@ const defaultData: TimelineEntity = {
 const formData = ref<TimelineEntity>({ ...props.oldData, ...defaultData });
 
 // 优先级选项
-const priorityOptions = [
-  { label: '高', value: 'high' },
-  { label: '中', value: 'medium' },
-  { label: '低', value: 'low' }
+const priorityOptions: Option[] = [
+  { name: '高', value: 'high' },
+  { name: '中', value: 'medium' },
+  { name: '低', value: 'low' }
 ];
 
 // 常用分类选项
@@ -127,7 +124,7 @@ watch(() => props.oldData, (newData) => {
 watch(() => props.openModal, (newModal) => {
   if (newModal.add) {
     formData.value = { ...defaultData };
-  } else if (newModal.edit) {
+  } else if (newModal.set) {
     formData.value = { ...props.oldData };
   }
 }, { deep: true });
@@ -137,7 +134,7 @@ watch(() => props.openModal, (newModal) => {
   <div>
     <SaveModal 
       name="时间线事件" 
-      :open="openModal" 
+      :open-modal="openModal" 
       @on-submit="onSubmit" 
       @on-close="onCancel"
       :show-delete="false"

@@ -58,8 +58,8 @@ public class Timeline {
     
     @Column(length = 500)
     private String tags; // 标签，以逗号分隔
-    
-    @Column(length = 500)
+
+    @Column(columnDefinition = "TEXT")
     private String attachments; // 附件路径，以逗号分隔
     
     @Column(columnDefinition = "BOOLEAN DEFAULT false")

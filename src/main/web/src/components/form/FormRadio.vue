@@ -2,7 +2,7 @@
 
 import {RadioGroup, RadioGroupOption} from "@headlessui/vue";
 
-interface Option {
+export interface Option {
   value: number | string,
   name: string
 }

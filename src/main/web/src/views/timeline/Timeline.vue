@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, getCurrentInstance, computed } from 'vue';
-import { TimelineEntity, TimelineStatistics } from '../../interface/timeline.ts';
-import { getTimelineList, getTimelineStatistics, getTimelineCategories } from '../../api/timelineApi.ts';
+import { TimelineEntity, TimelineStatistics } from '../../interface/timeline';
+import { getTimelineList, getTimelineStatistics, getTimelineCategories } from '../../api/timelineApi';
 import BackToHome from '../../components/BackToHome.vue';
 import Loading from '../../components/Loading.vue';
 import TimelineCard from './TimelineCard.vue';
@@ -189,6 +189,13 @@ onMounted(() => {
           <option value="medium">中</option>
           <option value="low">低</option>
         </select>
+        
+        <button 
+          @click="$router.push('/timeline/display')"
+          class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded font-medium transition-colors"
+        >
+          现代化展示
+        </button>
         
         <button 
           @click="openAddModal"

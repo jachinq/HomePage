@@ -2,7 +2,7 @@
 import {computed, ref, getCurrentInstance, onMounted} from 'vue'
 import {Dialog, DialogDescription, DialogPanel, DialogTitle} from "@headlessui/vue";
 
-interface OpenModal {
+export interface OpenModal {
   add: boolean,
   set: boolean
 }

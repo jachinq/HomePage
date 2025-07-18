@@ -2,8 +2,8 @@
   <span
     class="time text-gray-300 font-mono font-bold text-7xl w-full h-full flex justify-center items-center text-center"
     :class="customClass">{{ formattedTime }}</span>
-  <span class="date text-2xl text-gray-300 font-bold w-full flex justify-center items-center text-center mt-1 rounded-full px-4 py-2"
-    :class="customDateClass">{{ formattedDate }}</span>
+  <!-- <span class="date text-2xl text-gray-300 font-bold w-full flex justify-center items-center text-center mt-1 rounded-full px-4 py-2" -->
+    <!-- :class="customDateClass">{{ formattedDate }}</span> -->
 </template>
 
 <script setup lang="ts">
