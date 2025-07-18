@@ -1,8 +1,8 @@
 <template>
-  <div class="fixed inset-0 z-50 bg-slate-900/80 flex items-center justify-center p-4" v-if="isVisible"
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" v-if="isVisible"
     @click="handleBackgroundClick">
     <div
-      class="relative max-w-7xl max-h-screen w-full h-full bg-gray-800 rounded-lg overflow-hidden shadow-2xl flex flex-col"
+      class="relative max-w-7xl max-h-screen w-full h-full rounded-lg overflow-hidden shadow-2xl flex flex-col"
       @click.stop>
       <!-- 顶部工具栏 -->
       <div class="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
@@ -96,9 +96,9 @@
       </div>
 
       <!-- 预览内容区域 -->
-      <div class="flex-1 overflow-hidden relative bg-gray-900">
+      <div class="flex-1 overflow-hidden relative backdrop-blur-sm bg-slate-800/50">
         <!-- 加载状态 -->
-        <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-gray-900">
+        <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-gray-900/5">
           <div class="text-center">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
             <p class="mt-2 text-gray-300">加载中...</p>
@@ -129,7 +129,7 @@
 
         <!-- 音频预览 -->
         <div v-else-if="isAudio" class="h-full flex items-center justify-center p-4">
-          <div class="text-center">
+          <div class="text-center w-full flex flex-col items-center justify-center">
             <div class="w-32 h-32 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

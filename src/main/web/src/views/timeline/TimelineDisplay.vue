@@ -26,8 +26,18 @@
       </div>
 
       <!-- 过滤器区域 -->
-      <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-700">
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 mb-16 border border-gray-700">
         <div class="flex flex-wrap gap-4 items-center justify-center">
+          <div class="flex items-center gap-2">
+            <label class="text-gray-300 text-sm">年份:</label>
+            <select v-model="selectedYear"
+              class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-sky-500 focus:outline-none transition-colors">
+              <option value="">全部年份</option>
+              <option v-for="year in years" :key="year" :value="year">
+                {{ year }}
+              </option>
+            </select>
+          </div>
           <div class="flex items-center gap-2">
             <label class="text-gray-300 text-sm">分类:</label>
             <select v-model="selectedCategory"
@@ -78,7 +88,7 @@
       <!-- 时间线容器 -->
       <div class="relative">
         <!-- 垂直时间线 -->
-        <div
+        <div v-if="filteredAndSortedTimelines.length > 0"
           class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-sky-500 via-purple-500 to-pink-500 rounded-full">
         </div>
 
@@ -86,35 +96,41 @@
         <div v-if="filteredAndSortedTimelines.length === 0" class="text-center py-20">
           <div class="text-6xl mb-4">📅</div>
           <p class="text-gray-400 text-xl">暂无时间线事件</p>
-          <p class="text-gray-500 text-sm mt-2">开始记录您的重要时刻吧</p>
+          <!-- <p class="text-gray-500 text-sm mt-2">开始记录您的重要时刻吧</p> -->
         </div>
 
-        <div v-else class="space-y-8">
-          <div v-for="(timeline, index) in filteredAndSortedTimelines" :key="timeline.id" class="relative"
-            :class="index % 2 === 0 ? 'md:pr-1/2' : 'md:pl-1/2 md:text-right'">
+        <div v-else class="space-y-16">
+          <div v-for="(timeline, index) in filteredAndSortedTimelines" :key="timeline.id"
+            class="relative justify-center" :class="index % 2 === 1 ? '' : 'md:text-right'">
 
-            <!-- 时间线节点 -->
-            <div
-              class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white shadow-lg z-10"
-              :class="getPriorityNodeColor(timeline.priority)">
-            </div>
 
             <!-- 事件卡片 -->
-            <div class="timeline-card group" :class="index % 2 === 0 ? 'md:mr-8' : 'md:ml-8'"
+            <div class="timeline-card group" :class="index % 2 === 0 ? 'md:mr-[51%]' : 'md:ml-[51%]'"
               @click="selectTimeline(timeline)">
+
+              <!-- 时间线节点 -->
+              <div
+                class="absolute left-1/2 translate-y-[-26px] transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white shadow-lg z-10 group-hover:translate-y-[-16px] group-hover:shadow-xl transition-all duration-300"
+                :class="getPriorityNodeColor(timeline.priority)">
+              </div>
 
               <!-- 卡片内容 -->
               <div
                 class="bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 hover:border-sky-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer">
 
-                <!-- 卡片头部 -->
-                <div class="flex items-start justify-between mb-4">
-                  <div class="flex-1">
-                    <h3 class="text-xl font-bold text-white mb-2 group-hover:text-sky-400 transition-colors">
-                      {{ timeline.title }}
-                    </h3>
 
-                    <div class="flex items-center gap-3 text-sm text-gray-400">
+                <!-- 卡片头部 -->
+                <div class="flex items-center justify-between mb-4">
+                  <!-- 优先级标签 -->
+                  <div v-if="timeline.priority && index % 2 === 0"
+                    class="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
+                    :class="getPriorityBadgeColor(timeline.priority)">
+                    {{ getPriorityIcon(timeline.priority) }}
+                    {{ getPriorityText(timeline.priority) }}
+                  </div>
+
+                  <div class="flex group-hover:underline">
+                    <div class="flex items-center  gap-3 text-2xl font-bold text-gray-400">
                       <span class="flex items-center gap-1">
                         📅 {{ formatDate(timeline.eventDate) }}
                       </span>
@@ -122,16 +138,22 @@
                         ⏰ {{ timeline.eventTime }}
                       </span>
                     </div>
+
                   </div>
 
                   <!-- 优先级标签 -->
-                  <div v-if="timeline.priority"
+                  <div v-if="timeline.priority && index % 2 === 1"
                     class="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
                     :class="getPriorityBadgeColor(timeline.priority)">
                     {{ getPriorityIcon(timeline.priority) }}
                     {{ getPriorityText(timeline.priority) }}
                   </div>
                 </div>
+
+                <!-- 事件标题 -->
+                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-sky-400 transition-colors">
+                  {{ timeline.title }}
+                </h3>
 
                 <!-- 描述内容 -->
                 <div v-if="timeline.description" class="mb-4">
@@ -141,23 +163,18 @@
                 </div>
 
                 <!-- 分类和标签 -->
-                <div class="flex flex-wrap gap-2 mb-4">
-                  <span v-if="timeline.category"
-                    class="px-3 py-1 bg-sky-900/50 text-sky-300 text-xs rounded-full border border-sky-800">
-                    🏷️ {{ timeline.category }}
-                  </span>
+                <div class="flex flex-wrap gap-2 justify-between">
+                  <div class="flex flex-wrap gap-2">
+                    <span v-if="timeline.category"
+                      class="px-3 py-1 bg-sky-900/50 text-sky-300 text-xs rounded-full border border-sky-800">
+                      🏷️ {{ timeline.category }}
+                    </span>
 
-                  <span v-for="tag in parseTags(timeline.tags)" :key="tag"
-                    class="px-3 py-1 bg-purple-900/50 text-purple-300 text-xs rounded-full border border-purple-800">
-                    # {{ tag }}
-                  </span>
-                </div>
-
-                <!-- 卡片底部 -->
-                <div class="flex items-center justify-between text-xs text-gray-500">
-                  <span v-if="timeline.createTime">
-                    创建于 {{ formatDateTime(timeline.createTime) }}
-                  </span>
+                    <span v-for="tag in parseTags(timeline.tags)" :key="tag"
+                      class="px-3 py-1 bg-purple-900/50 text-purple-300 text-xs rounded-full border border-purple-800">
+                      # {{ tag }}
+                    </span>
+                  </div>
 
                   <div class="flex items-center gap-2">
                     <span v-if="timeline.isPublic" class="flex items-center gap-1 text-green-400">
@@ -168,6 +185,7 @@
                     </span>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -175,7 +193,7 @@
       </div>
 
       <!-- 返回按钮 -->
-      <div class="fixed bottom-6 right-6">
+      <div class="absolute top-8 right-20">
         <BackToHome />
       </div>
     </div>
@@ -205,9 +223,11 @@ import { useToast } from '@/components/toast';
 
 // 响应式数据
 const timelines = ref<TimelineEntity[]>([]);
+const years = ref<string[]>([]);
 const categories = ref<string[]>([]);
 const statistics = ref<TimelineStatistics | null>(null);
 const loading = ref(false);
+const selectedYear = ref('');
 const selectedCategory = ref('');
 const selectedPriority = ref('');
 const sortBy = ref('eventDate');
@@ -218,6 +238,11 @@ const selectedTimelineData = ref<TimelineEntity>({});
 // 计算属性
 const filteredAndSortedTimelines = computed(() => {
   let filtered = timelines.value;
+
+  // 过滤年份
+  if (selectedYear.value) {
+    filtered = filtered.filter(t => t.eventDate?.substr(0, 4) === selectedYear.value);
+  }
 
   // 过滤分类
   if (selectedCategory.value) {
@@ -269,6 +294,9 @@ const fetchTimelines = async () => {
     const result = await getTimelineList();
     if (result.success) {
       timelines.value = result.data || [];
+      const yearsSet = Array.from(new Set(timelines.value.map(t => t.eventDate?.substr(0, 4) || '未知'))).sort();
+      yearsSet?.reverse();
+      years.value = yearsSet;
     }
   } catch (error) {
     console.error('获取时间线列表失败:', error);
