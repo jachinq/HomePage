@@ -103,3 +103,8 @@ Authorization: Bearer YOUR_JWT_TOKEN
     "tags": "结婚,三亚,婚礼",
     "isPublic": false
 } 
+
+### 15.展示时间线
+GET http://127.0.0.1:8080/api/timeline/statistics
+Content-Type: application/json
+Authorization: Bearer {{token}}

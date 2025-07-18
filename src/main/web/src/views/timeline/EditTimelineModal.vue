@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, watch, getCurrentInstance } from 'vue';
-import { TimelineEntity } from '../../interface/timeline.ts';
-import { saveTimeline } from '../../api/timelineApi.ts';
+import { TimelineEntity } from '../../interface/timeline';
+import { saveTimeline } from '../../api/timelineApi';
 import SaveModal, { OpenModal } from '../../components/SaveModal.vue';
 import FormItem from '../../components/form/FormItem.vue';
 import FormInput from '../../components/form/FormInput.vue';
 import FormRadio, { Option } from '../../components/form/FormRadio.vue';
-import { preProcFormData } from '../../utils/commUtil.ts';
+import { preProcFormData } from '../../utils/commUtil';
+import { uploadFiles, FileInfo, getFileInfo, deleteFile } from '../../api/fileApi';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -28,6 +29,11 @@ const defaultData: TimelineEntity = {
 };
 
 const formData = ref<TimelineEntity>({ ...props.oldData, ...defaultData });
+
+// 文件上传相关状态
+const selectedFiles = ref<File[]>([]);
+const uploadedFiles = ref<FileInfo[]>([]);
+const uploading = ref(false);
 
 // 优先级选项
 const priorityOptions: Option[] = [
@@ -73,6 +79,93 @@ const validateForm = () => {
   return true;
 };
 
+// 文件选择处理
+const handleFileSelect = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.files) {
+    selectedFiles.value = Array.from(target.files);
+  }
+};
+
+// 上传文件
+const uploadFileList = async () => {
+  if (selectedFiles.value.length === 0) return;
+  
+  uploading.value = true;
+  try {
+    const formData = new FormData();
+    selectedFiles.value.forEach(file => {
+      formData.append('files', file);
+    });
+    formData.append("description", "upload files");
+
+    // console.log("upload", formData, selectedFiles.value)
+    
+    const result = await uploadFiles(formData);
+    if (result.success) {
+      uploadedFiles.value = [...uploadedFiles.value, ...result.data.success];
+      const failedFiles: string[] = result.data?.failed || [];
+      // 过滤掉失败的文件
+      selectedFiles.value = selectedFiles.value.filter(file => failedFiles.some(name => name === file.name));
+      toast?.success(result.message);
+    } else {
+      toast?.error(result.message);
+    }
+  } catch (error) {
+    console.error('文件上传失败:', error);
+    toast?.error('文件上传失败');
+  } finally {
+    uploading.value = false;
+  }
+};
+
+// 删除已上传的文件
+const removeUploadedFile = async (fileInfo: FileInfo) => {
+  try {
+    const result = await deleteFile(fileInfo.id);
+    if (result.success) {
+      uploadedFiles.value = uploadedFiles.value.filter(f => f.id !== fileInfo.id);
+      toast?.success('文件删除成功');
+    } else {
+      toast?.error(result.message);
+    }
+  } catch (error) {
+    toast?.error('文件删除失败');
+  }
+};
+
+// 删除选中的文件
+const removeSelectedFile = (index: number) => {
+  selectedFiles.value.splice(index, 1);
+};
+
+// 格式化文件大小
+const formatFileSize = (bytes: number): string => {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+// 解析已存在的附件
+const parseExistingAttachments = async () => {
+  if (!formData.value.attachments) return;
+  
+  const fileIds = formData.value.attachments.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+  
+  for (const fileId of fileIds) {
+    try {
+      const result = await getFileInfo(fileId);
+      if (result.success) {
+        uploadedFiles.value.push(result.data);
+      }
+    } catch (error) {
+      console.error('获取文件信息失败:', error);
+    }
+  }
+};
+
 // 提交表单
 const onSubmit = async () => {
   if (!validateForm()) return;
@@ -80,6 +173,11 @@ const onSubmit = async () => {
   try {
     // 处理表单数据
     const submitData = { ...formData.value };
+    
+    // 处理附件：将上传的文件ID以逗号分隔的形式保存
+    if (uploadedFiles.value.length > 0) {
+      submitData.attachments = uploadedFiles.value.map(file => file.id).join(',');
+    }
     
     // 清理空字段
     preProcFormData(submitData);
@@ -115,8 +213,14 @@ const onCancel = () => {
 watch(() => props.oldData, (newData) => {
   if (props.openModal.add) {
     formData.value = { ...defaultData };
+    // 重置文件状态
+    selectedFiles.value = [];
+    uploadedFiles.value = [];
   } else {
     formData.value = { ...newData };
+    // 解析已存在的附件
+    uploadedFiles.value = [];
+    parseExistingAttachments();
   }
 }, { deep: true });
 
@@ -124,8 +228,14 @@ watch(() => props.oldData, (newData) => {
 watch(() => props.openModal, (newModal) => {
   if (newModal.add) {
     formData.value = { ...defaultData };
+    // 重置文件状态
+    selectedFiles.value = [];
+    uploadedFiles.value = [];
   } else if (newModal.set) {
     formData.value = { ...props.oldData };
+    // 解析已存在的附件
+    uploadedFiles.value = [];
+    parseExistingAttachments();
   }
 }, { deep: true });
 </script>
@@ -218,11 +328,78 @@ watch(() => props.openModal, (newModal) => {
 
         <!-- 附件 -->
         <FormItem label="附件">
-          <FormInput 
-            v-model="formData.attachments" 
-            placeholder="附件路径或链接，多个用逗号分隔"
-            maxlength="500"
-          />
+          <!-- 文件选择 -->
+          <div class="mb-4">
+            <input 
+              type="file" 
+              multiple 
+              @change="handleFileSelect"
+              class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-500 file:text-white hover:file:bg-blue-600"
+              accept="*/*"
+            />
+          </div>
+          
+          <!-- 选中的文件列表 -->
+          <div v-if="selectedFiles.length > 0" class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-medium text-gray-300">待上传文件：</span>
+              <button 
+                type="button"
+                @click="uploadFileList"
+                :disabled="uploading"
+                class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 disabled:opacity-50"
+              >
+                {{ uploading ? '上传中...' : '上传文件' }}
+              </button>
+            </div>
+            <div class="space-y-2">
+              <div 
+                v-for="(file, index) in selectedFiles" 
+                :key="index"
+                class="flex items-center justify-between p-2 bg-gray-700 rounded"
+              >
+                <div class="flex items-center">
+                  <span class="text-sm text-gray-300">{{ file.name }}</span>
+                  <span class="ml-2 text-xs text-gray-500">({{ formatFileSize(file.size) }})</span>
+                </div>
+                <button 
+                  type="button"
+                  @click="removeSelectedFile(index)"
+                  class="text-red-400 hover:text-red-300"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 已上传的文件列表 -->
+          <div v-if="uploadedFiles.length > 0" class="mb-4">
+            <span class="text-sm font-medium text-gray-300">已上传文件：</span>
+            <div class="space-y-2 mt-2">
+              <div 
+                v-for="file in uploadedFiles" 
+                :key="file.id"
+                class="flex items-center justify-between p-2 bg-gray-700 rounded"
+              >
+                <div class="flex items-center">
+                  <span class="text-sm text-gray-300">{{ file.originalFileName }}</span>
+                  <span class="ml-2 text-xs text-gray-500">({{ formatFileSize(file.fileSize) }})</span>
+                </div>
+                <button 
+                  type="button"
+                  @click="removeUploadedFile(file)"
+                  class="text-red-400 hover:text-red-300"
+                >
+                  删除
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <p class="text-xs text-gray-500 mt-2">
+            支持多文件上传，文件将以逗号分隔的ID形式保存
+          </p>
         </FormItem>
 
         <!-- 公开设置 -->

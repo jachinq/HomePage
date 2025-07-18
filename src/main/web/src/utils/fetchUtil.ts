@@ -38,13 +38,21 @@ export default {
     },
 
     post: (url: string, data: any, headers: any = {}) => {
+        let dataStr = null;
+        let requestHeaders = {...procHeaders(url, headers)};
+        
+        if (data instanceof FormData) {
+            dataStr = data;
+            // 对于 FormData，不要设置 Content-Type，让浏览器自动设置
+        } else {
+            dataStr = JSON.stringify(data);
+            requestHeaders['Content-Type'] = 'application/json';
+        }
+        
         return fetch(procUrl(url), {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...procHeaders(url, headers),
-            },
-            body: JSON.stringify(data),
+            headers: requestHeaders,
+            body: dataStr,
         });
     },
 
