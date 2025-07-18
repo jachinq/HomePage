@@ -64,6 +64,14 @@
                   class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors">
             {{ sortDirection === 'asc' ? '📈 升序' : '📉 降序' }}
           </button>
+
+          
+          <button @click="showTimelineManager" 
+                  class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors">
+            管理时间线
+          </button>
+
+          
         </div>
       </div>
 
@@ -196,6 +204,7 @@ import { TimelineEntity, TimelineStatistics } from '../../interface/timeline';
 import { getTimelineList, getTimelineStatistics, getTimelineCategories } from '../../api/timelineApi';
 import BackToHome from '../../components/BackToHome.vue';
 import TimelineDetailModal from './TimelineDetailModal.vue';
+import router from '@/router';
 
 // 响应式数据
 const timelines = ref<TimelineEntity[]>([]);
@@ -362,6 +371,10 @@ const formatDateTime = (dateTime?: string) => {
   if (!dateTime) return '';
   return new Date(dateTime).toLocaleString('zh-CN');
 };
+
+const showTimelineManager = () => {
+  router.push('/timeline');
+}
 
 // 生命周期
 onMounted(() => {

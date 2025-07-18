@@ -33,7 +33,7 @@ function pad(num: number) {
   return num < 10 ? '0' + num : num
 }
 
-const weekMap = ['日', '一', '二', '三', '四', '五', '六']
+// const weekMap = ['日', '一', '二', '三', '四', '五', '六']
 
 const formattedTime = computed(() => {
   let date = time.value
@@ -45,15 +45,15 @@ const formattedTime = computed(() => {
   return fmt
 })
 
-const formattedDate = computed(() => {
-  let date: Date = time.value
-  let fmt = props.dateFormat
-  fmt = fmt.replace('yyyy', date.getFullYear().toString())
-  fmt = fmt.replace('MM', pad(date.getMonth() + 1).toString())
-  fmt = fmt.replace('dd', pad(date.getDate()).toString())
-  fmt = fmt.replace('d', weekMap[date.getDay()])
-  return fmt
-})
+// const formattedDate = computed(() => {
+//   let date: Date = time.value
+//   let fmt = props.dateFormat
+//   fmt = fmt.replace('yyyy', date.getFullYear().toString())
+//   fmt = fmt.replace('MM', pad(date.getMonth() + 1).toString())
+//   fmt = fmt.replace('dd', pad(date.getDate()).toString())
+//   fmt = fmt.replace('d', weekMap[date.getDay()])
+//   return fmt
+// })
 
 const time = ref(new Date())
 const timeInterval = ref()

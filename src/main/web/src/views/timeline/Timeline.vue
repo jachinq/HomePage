@@ -214,7 +214,7 @@ onMounted(() => {
         <p class="text-sm mt-2">点击上方"新增事件"按钮开始记录重要时刻</p>
       </div>
       
-      <div v-else class="space-y-4">
+      <div v-else class="flex flex-col md:flex-row gap-4 flex-wrap">
         <TimelineCard
           v-for="timeline in filteredTimelines"
           :key="timeline.id"
