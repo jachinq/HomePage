@@ -129,17 +129,15 @@
                     {{ getPriorityText(timeline.priority) }}
                   </div>
 
-                  <div class="flex group-hover:underline">
-                    <div class="flex items-center  gap-3 text-2xl font-bold text-gray-400">
-                      <span class="flex items-center gap-1">
-                        📅 {{ formatDate(timeline.eventDate) }}
-                      </span>
-                      <span v-if="timeline.eventTime" class="flex items-center gap-1">
-                        ⏰ {{ timeline.eventTime }}
-                      </span>
-                    </div>
-
+                  <div class="flex items-center  gap-3 text-2xl font-bold text-gray-100  group-hover:underline">
+                    <span class="flex items-center gap-1">
+                      📅 {{ formatDate(timeline.eventDate) }}
+                    </span>
+                    <span v-if="timeline.eventTime" class="flex items-center gap-1">
+                      ⏰ {{ timeline.eventTime }}
+                    </span>
                   </div>
+
 
                   <!-- 优先级标签 -->
                   <div v-if="timeline.priority && index % 2 === 1"
@@ -157,7 +155,7 @@
 
                 <!-- 描述内容 -->
                 <div v-if="timeline.description" class="mb-4">
-                  <p class="text-gray-300 leading-relaxed">
+                  <p class="text-gray-400 leading-relaxed">
                     {{ timeline.description }}
                   </p>
                 </div>
@@ -409,13 +407,13 @@ const formatDate = (date?: string) => {
   });
 };
 
-const formatDateTime = (dateTime?: string) => {
-  if (!dateTime) return '';
-  return new Date(dateTime).toLocaleString('zh-CN');
-};
+// const formatDateTime = (dateTime?: string) => {
+//   if (!dateTime) return '';
+//   return new Date(dateTime).toLocaleString('zh-CN');
+// };
 
 const showTimelineManager = () => {
-  router.push('/timeline');
+  router.push('/timeline/manager');
 }
 
 // 生命周期
