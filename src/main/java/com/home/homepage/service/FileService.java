@@ -152,7 +152,7 @@ public class FileService {
      * 获取文件信息
      */
     public FileInfo getFileInfo(Long fileId) {
-        return fileInfoRepository.findByIdAndUserIdAndIsActiveTrue(fileId, Core.getUid()).orElse(null);
+        return fileInfoRepository.findByIdAndIsActiveTrue(fileId).orElse(null);
     }
 
     /**
