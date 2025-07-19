@@ -1,6 +1,5 @@
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" v-if="isVisible"
-    @click="handleBackgroundClick">
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" v-if="isVisible" @click="handleBackgroundClick">
     <div
       class="relative max-w-7xl max-h-screen w-full h-full rounded-lg overflow-hidden shadow-2xl flex flex-col select-none"
       @click.stop>
@@ -153,7 +152,7 @@
         <!-- Markdown预览 -->
         <div v-else-if="isMarkdown" class="h-full overflow-auto p-6">
           <div v-if="markdownHtml" class="max-w-none">
-            <div v-html="markdownHtml" class="markdown-content"></div>
+            <div v-html="markdownHtml" class="markdown-content prose dark:prose-invert  prose-a:text-sky-400 prose-p:text-justify prose-img:rounded-xl prose-headings:underline"></div>
           </div>
           <div v-else class="text-center text-gray-400 mt-8">
             <p>无法预览该 Markdown 文件</p>
@@ -165,7 +164,7 @@
           <div v-if="textContent" class="max-w-full">
             <pre
               class="whitespace-pre-wrap text-sm font-mono bg-gray-800 text-gray-300 p-4 rounded-lg border border-gray-600">{{
-        textContent }}</pre>
+                textContent }}</pre>
           </div>
           <div v-else class="text-center text-gray-400 mt-8">
             <p>无法预览该文本文件</p>
@@ -211,7 +210,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import { getFilePreviewUrl, getFileDownloadUrl, getFileInfo, FileInfo } from '../api/fileApi'
-import { marked } from 'marked' 
+import { marked } from 'marked'
 
 interface Props {
   fileIds?: number[]
@@ -292,9 +291,9 @@ const isPDF = computed(() => {
 const isMarkdown = computed(() => {
   const markdownTypes = ['text/markdown', 'text/x-markdown', 'application/x-markdown']
   const markdownExtensions = ['.md', '.markdown', '.mdown', '.mkd']
-  
-  return markdownTypes.includes(mimeType.value) || 
-         markdownExtensions.some(ext => fileName.value.toLowerCase().endsWith(ext))
+
+  return markdownTypes.includes(mimeType.value) ||
+    markdownExtensions.some(ext => fileName.value.toLowerCase().endsWith(ext))
 })
 
 const isText = computed(() => {
@@ -381,15 +380,16 @@ const loadTextContent = async () => {
       throw new Error('加载文本内容失败')
     }
     const content = await response.text()
-    
+
     if (isMarkdown.value) {
-      // 使用简单的 Markdown 解析器或者 marked 库
       try {
-        // 如果安装了 marked 库，使用这行代码：
-        // markdownHtml.value = marked.parse(content)
-        
-        // 临时使用简单解析器
-        markdownHtml.value = await marked.parse(content)
+        //markdown 解析器
+        const renderer = new marked.Renderer();
+        //重写 a 标签的解析规则
+        renderer.link = function({href,title,text}): string {
+            return `<a href="${href}" title="${title || '打开新窗口'}" target="_blank">${text}</a>`
+        }
+        markdownHtml.value = await marked.parse(content, {renderer,  pedantic: false, gfm: true, breaks: true})
       } catch (error) {
         console.error('Markdown 解析失败:', error)
         // 如果解析失败，回退到纯文本显示
@@ -724,7 +724,8 @@ iframe {
 
 /* Markdown 内容样式 - 深色主题 */
 .markdown-content {
-  color: #e5e7eb; /* gray-200 */
+  color: #e5e7eb;
+  /* gray-200 */
   line-height: 1.7;
 }
 
@@ -766,13 +767,15 @@ iframe {
 }
 
 .markdown-content a {
-  color: #60a5fa; /* blue-400 */
+  color: #60a5fa;
+  /* blue-400 */
   text-decoration: underline;
   transition: color 0.2s ease;
 }
 
 .markdown-content a:hover {
-  color: #93c5fd; /* blue-300 */
+  color: #93c5fd;
+  /* blue-300 */
 }
 
 .markdown-content strong {
@@ -785,8 +788,10 @@ iframe {
 }
 
 .markdown-content code {
-  background-color: #374151; /* gray-700 */
-  color: #fbbf24; /* amber-400 */
+  background-color: #374151;
+  /* gray-700 */
+  color: #fbbf24;
+  /* amber-400 */
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
@@ -794,8 +799,10 @@ iframe {
 }
 
 .markdown-content pre {
-  background-color: #1f2937; /* gray-800 */
-  border: 1px solid #374151; /* gray-700 */
+  background-color: #1f2937;
+  /* gray-800 */
+  border: 1px solid #374151;
+  /* gray-700 */
   border-radius: 0.5rem;
   padding: 1rem;
   margin: 1rem 0;
@@ -804,18 +811,22 @@ iframe {
 
 .markdown-content pre code {
   background-color: transparent;
-  color: #e5e7eb; /* gray-200 */
+  color: #e5e7eb;
+  /* gray-200 */
   padding: 0;
   font-size: 0.875rem;
 }
 
 .markdown-content blockquote {
-  border-left: 4px solid #6b7280; /* gray-500 */
-  background-color: #374151; /* gray-700 */
+  border-left: 4px solid #6b7280;
+  /* gray-500 */
+  background-color: #374151;
+  /* gray-700 */
   padding: 1rem 1.5rem;
   margin: 1rem 0;
   font-style: italic;
-  color: #d1d5db; /* gray-300 */
+  color: #d1d5db;
+  /* gray-300 */
 }
 
 .markdown-content ul,
@@ -843,19 +854,22 @@ iframe {
 
 .markdown-content th,
 .markdown-content td {
-  border: 1px solid #374151; /* gray-700 */
+  border: 1px solid #374151;
+  /* gray-700 */
   padding: 0.5rem 1rem;
   text-align: left;
 }
 
 .markdown-content th {
-  background-color: #374151; /* gray-700 */
+  background-color: #374151;
+  /* gray-700 */
   font-weight: 600;
 }
 
 .markdown-content hr {
   border: none;
-  border-top: 1px solid #374151; /* gray-700 */
+  border-top: 1px solid #374151;
+  /* gray-700 */
   margin: 2rem 0;
 }
 </style>
