@@ -155,9 +155,7 @@
 
                 <!-- 描述内容 -->
                 <div v-if="timeline.description" class="mb-4 hover:cursor-default" @click.stop>
-                  <p class="text-gray-400 leading-relaxed">
-                    {{ timeline.description }}
-                  </p>
+                  <LargeTextDisplay :text="timeline.description || ''" />
                 </div>
 
                 <!-- 分类和标签 -->
@@ -218,6 +216,7 @@ import BackToHome from '../../components/BackToHome.vue';
 import FilePreview from '@/components/FilePreview.vue';
 import { useToast } from '@/components/toast';
 import { parseAttachments } from '@/utils/commUtil';
+import LargeTextDisplay from '@/components/LargeTextDisplay.vue';
 
 // 响应式数据
 const timelines = ref<TimelineEntity[]>([]);
