@@ -2,6 +2,7 @@
 import { getCurrentInstance } from 'vue';
 import { TimelineEntity } from '../../interface/timeline.ts';
 import { deleteTimeline } from '../../api/timelineApi.ts';
+import { parseAttachments } from '@/utils/commUtil.ts';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -88,30 +89,7 @@ const formatDateTime = (date?: string, time?: string) => {
     :class="getPriorityColor(timeline.priority)">
 
     <!-- 头部信息 -->
-    <div class="flex justify-between items-start">
-      <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1">
-          <h3 class="text-lg font-semibold text-white">{{ timeline.title }}</h3>
-          <!-- <span v-if="timeline.priority" class="px-2 py-1 rounded text-xs font-medium"
-            :class="getPriorityBadgeColor(timeline.priority)">
-            {{ getPriorityText(timeline.priority) }}
-          </span> -->
-        </div>
-
-        <div class="flex items-center gap-4 text-sm text-gray-400">
-          <span>📅 {{ formatDateTime(timeline.eventDate, timeline.eventTime) }}</span>
-          <span v-if="timeline.category" class="flex items-center gap-1">
-            🏷️ {{ timeline.category }}
-          </span>
-          <!-- <span v-if="timeline.isPublic" class="flex items-center gap-1">
-            🌐 公开
-          </span>
-          <span v-else="timeline.isPublic" class="flex items-center gap-1">
-            🔒 私密
-          </span> -->
-        </div>
-      </div>
-
+    <div class="flex justify-between items-start  mb-2">
       <!-- 操作按钮 -->
       <div class="hidden absolute top-5 right-3 group-hover:block ">
         <div class="flex gap-2">
@@ -132,39 +110,68 @@ const formatDateTime = (date?: string, time?: string) => {
           </button>
         </div>
       </div>
+
+      <h3 class="text-lg font-semibold text-white">{{ timeline.title }}</h3>
     </div>
 
-    <!-- 描述内容 -->
-    <div>
-      <template v-if="timeline.description" class="mb-3">
-        <p class="text-gray-300 leading-relaxed">{{ timeline.description }}</p>
-      </template>
-      <template v-else>
-        <p class="text-gray-300 leading-relaxed">暂无描述</p>
-      </template>
-    </div>
 
-    <!-- 标签 -->
-    <div class="flex flex-wrap gap-2 mb-3">
-      <template v-if="timeline.tags">
-        <span v-for="tag in parseTags(timeline.tags)" :key="tag"
-          class="px-2 py-1 bg-blue-900 text-blue-200 text-xs rounded-full">
-          # {{ tag }}
+    <div class="flex gap-2 flex-col">
+      <!-- <div class="flex items-center gap-2 mb-1">
+        <span v-if="timeline.priority" class="px-2 py-1 rounded text-xs font-medium"
+            :class="getPriorityBadgeColor(timeline.priority)">
+            {{ getPriorityText(timeline.priority) }}
+          </span>
+      </div> -->
+
+      <!-- 事件日期 -->
+      <div class="flex items-center gap-4 text-sm text-gray-400">
+        <span>📅 {{ formatDateTime(timeline.eventDate, timeline.eventTime) }}</span>
+        <span v-if="timeline.category" class="flex items-center gap-1">
+          🏷️ {{ timeline.category }}
         </span>
-      </template>
-      <template v-else>
-        <span class="px-2 py-1 bg-gray-900 text-blue-200 text-xs rounded-full">未设置标签</span>
-      </template>
-    </div>
+        <!-- <span v-if="timeline.isPublic" class="flex items-center gap-1">
+            🌐 公开
+          </span>
+          <span v-else="timeline.isPublic" class="flex items-center gap-1">
+            🔒 私密
+          </span> -->
+      </div>
 
-    <!-- 时间信息 -->
-    <div class="flex justify-between items-center text-xs text-gray-500 gap-2">
-      <span v-if="timeline.createTime">
-        创建于 {{ formatDateTime(timeline.createTime) }}
-      </span>
-      <span v-if="timeline.updateTime && timeline.updateTime !== timeline.createTime">
-        更新于 {{ formatDateTime(timeline.updateTime) }}
-      </span>
+      <!-- 描述内容 -->
+      <div>
+        <template v-if="timeline.description">
+          <p class="text-gray-300 leading-relaxed">{{ timeline.description }}</p>
+        </template>
+        <template v-else>
+          <p class="text-gray-300 leading-relaxed">暂无描述</p>
+        </template>
+      </div>
+
+      <!-- 标签 -->
+      <div class="flex flex-wrap gap-2">
+        <span v-if="timeline.attachments" class="flex items-center gap-1 text-blue-400">
+          📃 {{ parseAttachments(timeline)?.length }} 个附件
+        </span>
+        <template v-if="timeline.tags">
+          <span v-for="tag in parseTags(timeline.tags)" :key="tag"
+            class="px-2 py-1 bg-blue-900 text-blue-200 text-xs rounded-full">
+            # {{ tag }}
+          </span>
+        </template>
+        <template v-else>
+          <span class="px-2 py-1 bg-gray-900 text-blue-200 text-xs rounded-full">未设置标签</span>
+        </template>
+      </div>
+
+      <!-- 时间信息 -->
+      <div class="flex justify-between items-center text-xs text-gray-500 gap-2">
+        <span v-if="timeline.createTime">
+          创建于 {{ formatDateTime(timeline.createTime) }}
+        </span>
+        <span v-if="timeline.updateTime && timeline.updateTime !== timeline.createTime">
+          更新于 {{ formatDateTime(timeline.updateTime) }}
+        </span>
+      </div>
     </div>
   </div>
 </template>

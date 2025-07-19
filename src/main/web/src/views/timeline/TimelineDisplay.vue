@@ -154,7 +154,7 @@
                 </h3>
 
                 <!-- 描述内容 -->
-                <div v-if="timeline.description" class="mb-4">
+                <div v-if="timeline.description" class="mb-4 hover:cursor-default" @click.stop>
                   <p class="text-gray-400 leading-relaxed">
                     {{ timeline.description }}
                   </p>
@@ -179,7 +179,7 @@
                       🌐 公开
                     </span> -->
                     <span v-if="timeline.attachments" class="flex items-center gap-1 text-blue-400">
-                      📎 附件
+                      📎 {{parseAttachments(timeline)?.length}} 个附件
                     </span>
                   </div>
                 </div>
@@ -217,6 +217,7 @@ import { getTimelineList, getTimelineStatistics, getTimelineCategories } from '.
 import BackToHome from '../../components/BackToHome.vue';
 import FilePreview from '@/components/FilePreview.vue';
 import { useToast } from '@/components/toast';
+import { parseAttachments } from '@/utils/commUtil';
 
 // 响应式数据
 const timelines = ref<TimelineEntity[]>([]);
@@ -341,18 +342,6 @@ const selectTimeline = (timeline: TimelineEntity) => {
 const closeDetailModal = () => {
   showDetailModal.value = false;
   selectedTimelineData.value = {};
-};
-
-// 解析附件信息
-const parseAttachments = (timeline?: TimelineEntity): number[] => {
-  if (!timeline) return [];
-  if (!timeline.attachments) return [];
-
-  console.log("click card", timeline.attachments)
-  // 假设附件格式为逗号分隔的文件名
-  return timeline.attachments.split(',')
-    .map(id => parseInt(id))
-    .filter(id => !isNaN(id));
 };
 
 // 工具方法

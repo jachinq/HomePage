@@ -1,3 +1,4 @@
+import { TimelineEntity } from "@/interface/timeline";
 
 /**
  * 生成随机字符串
@@ -39,3 +40,15 @@ export const preProcFormData = (formData: any) => {
         }
     }
 }
+
+// 解析附件信息
+export const parseAttachments = (timeline?: TimelineEntity): number[] => {
+  if (!timeline) return [];
+  if (!timeline.attachments) return [];
+
+  console.log("click card", timeline.attachments)
+  // 假设附件格式为逗号分隔的文件名
+  return timeline.attachments.split(',')
+    .map(id => parseInt(id))
+    .filter(id => !isNaN(id));
+};
