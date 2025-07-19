@@ -1,19 +1,19 @@
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" v-if="isVisible" @click="handleBackgroundClick">
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-800/80" v-if="isVisible" @click="handleBackgroundClick">
     <div
-      class="relative max-w-7xl max-h-screen w-full h-full rounded-lg overflow-hidden shadow-2xl flex flex-col select-none"
+      class="relative max-w-7xl max-h-screen w-full h-full rounded-lg overflow-hidden shadow-2xl flex flex-col"
       @click.stop>
       <!-- 顶部工具栏 -->
       <div class="flex items-center justify-between p-4 border-b border-gray-700 bg-gray-800">
         <div class="flex items-center space-x-4">
           <h3 class="text-lg font-semibold text-white truncate">{{ fileInfo?.originalFileName || '文件预览' }}</h3>
-          <span class="text-sm text-gray-400">{{ formatFileSize(fileInfo?.fileSize || 0) }}</span>
+          <span class="text-sm text-gray-400 select-none">{{ formatFileSize(fileInfo?.fileSize || 0) }}</span>
           <!-- 文件计数器 -->
-          <span v-if="canSwitchFiles" class="text-sm text-gray-400">
+          <span v-if="canSwitchFiles" class="text-sm text-gray-400 select-none">
             {{ currentFileIndex + 1 }} / {{ props.fileIds?.length }}
           </span>
         </div>
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-2 select-none">
           <!-- 工具按钮 -->
           <template v-if="isImage">
             <button @click="zoomIn"
@@ -105,7 +105,7 @@
         </div>
 
         <!-- 图片预览 -->
-        <div v-else-if="isImage" class="h-full overflow-auto" ref="imageContainer">
+        <div v-else-if="isImage" class="h-full overflow-auto select-none" ref="imageContainer">
           <div class="h-full flex items-center justify-center p-4 relative">
             <img :src="previewUrl" :alt="fileInfo?.originalFileName"
               :class="['max-w-full max-h-full object-contain', { 'transition-transform duration-200': !isDragging }]"
@@ -120,14 +120,14 @@
         </div>
 
         <!-- 视频预览 -->
-        <div v-else-if="isVideo" class="h-full flex items-center justify-center p-4">
+        <div v-else-if="isVideo" class="h-full flex items-center justify-center p-4 select-none">
           <video :src="previewUrl" controls class="max-w-full max-h-full" @error="handleVideoError">
             您的浏览器不支持视频播放。
           </video>
         </div>
 
         <!-- 音频预览 -->
-        <div v-else-if="isAudio" class="h-full flex items-center justify-center p-4">
+        <div v-else-if="isAudio" class="h-full flex items-center justify-center p-4 select-none">
           <div class="text-center w-full flex flex-col items-center justify-center">
             <div class="w-32 h-32 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,17 +142,22 @@
         </div>
 
         <!-- PDF预览 -->
-        <div v-else-if="isPDF" class="h-full">
-          <iframe :src="previewUrl" class="w-full h-full border-0 bg-gray-900" @error="handlePDFError">
-            <p class="text-gray-300">您的浏览器不支持PDF预览。<a :href="downloadUrl" class="text-blue-400 hover:underline">点击下载</a>
-            </p>
-          </iframe>
+        <div v-else-if="isPDF" class="h-full flex items-center justify-center flex-col gap-2">
+           <!-- 使用浏览器本身打开 -->
+            <p>{{ fileInfo?.originalFileName }}</p>
+            <a :href="previewUrl" target="_blank">
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors select-none">
+                打开PDF
+              </button>
+            </a>
         </div>
 
         <!-- Markdown预览 -->
         <div v-else-if="isMarkdown" class="h-full overflow-auto p-6">
           <div v-if="markdownHtml" class="max-w-none">
-            <div v-html="markdownHtml" class="markdown-content prose dark:prose-invert  prose-a:text-sky-400 prose-p:text-justify prose-img:rounded-xl prose-headings:underline"></div>
+            <div v-html="markdownHtml"
+              class="markdown-content prose dark:prose-invert  prose-a:text-sky-400 prose-p:text-justify prose-img:rounded-xl prose-headings:underline">
+            </div>
           </div>
           <div v-else class="text-center text-gray-400 mt-8">
             <p>无法预览该 Markdown 文件</p>
@@ -386,10 +391,10 @@ const loadTextContent = async () => {
         //markdown 解析器
         const renderer = new marked.Renderer();
         //重写 a 标签的解析规则
-        renderer.link = function({href,title,text}): string {
-            return `<a href="${href}" title="${title || '打开新窗口'}" target="_blank">${text}</a>`
+        renderer.link = function ({ href, title, text }): string {
+          return `<a href="${href}" title="${title || '打开新窗口'}" target="_blank">${text}</a>`
         }
-        markdownHtml.value = await marked.parse(content, {renderer,  pedantic: false, gfm: true, breaks: true})
+        markdownHtml.value = await marked.parse(content, { renderer, pedantic: false, gfm: true, breaks: true })
       } catch (error) {
         console.error('Markdown 解析失败:', error)
         // 如果解析失败，回退到纯文本显示
@@ -567,11 +572,6 @@ const handleAudioError = () => {
   errorMessage.value = '音频加载失败'
 }
 
-const handlePDFError = () => {
-  hasError.value = true
-  errorMessage.value = 'PDF加载失败'
-}
-
 const handleImageLoad = () => {
   hasError.value = false
   showOperationTip()
@@ -715,161 +715,5 @@ onUnmounted(() => {
 /* 视频播放器深色样式 */
 video {
   background: #111827;
-}
-
-/* PDF iframe 深色背景 */
-iframe {
-  background: #111827;
-}
-
-/* Markdown 内容样式 - 深色主题 */
-.markdown-content {
-  color: #e5e7eb;
-  /* gray-200 */
-  line-height: 1.7;
-}
-
-.markdown-content h1,
-.markdown-content h2,
-.markdown-content h3,
-.markdown-content h4,
-.markdown-content h5,
-.markdown-content h6 {
-  color: #ffffff;
-  font-weight: 600;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-  line-height: 1.3;
-}
-
-.markdown-content h1 {
-  font-size: 2rem;
-  border-bottom: 2px solid #374151;
-  padding-bottom: 0.5rem;
-}
-
-.markdown-content h2 {
-  font-size: 1.5rem;
-  border-bottom: 1px solid #374151;
-  padding-bottom: 0.3rem;
-}
-
-.markdown-content h3 {
-  font-size: 1.25rem;
-}
-
-.markdown-content h4 {
-  font-size: 1.1rem;
-}
-
-.markdown-content p {
-  margin-bottom: 1rem;
-}
-
-.markdown-content a {
-  color: #60a5fa;
-  /* blue-400 */
-  text-decoration: underline;
-  transition: color 0.2s ease;
-}
-
-.markdown-content a:hover {
-  color: #93c5fd;
-  /* blue-300 */
-}
-
-.markdown-content strong {
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.markdown-content em {
-  font-style: italic;
-}
-
-.markdown-content code {
-  background-color: #374151;
-  /* gray-700 */
-  color: #fbbf24;
-  /* amber-400 */
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  font-size: 0.875rem;
-}
-
-.markdown-content pre {
-  background-color: #1f2937;
-  /* gray-800 */
-  border: 1px solid #374151;
-  /* gray-700 */
-  border-radius: 0.5rem;
-  padding: 1rem;
-  margin: 1rem 0;
-  overflow-x: auto;
-}
-
-.markdown-content pre code {
-  background-color: transparent;
-  color: #e5e7eb;
-  /* gray-200 */
-  padding: 0;
-  font-size: 0.875rem;
-}
-
-.markdown-content blockquote {
-  border-left: 4px solid #6b7280;
-  /* gray-500 */
-  background-color: #374151;
-  /* gray-700 */
-  padding: 1rem 1.5rem;
-  margin: 1rem 0;
-  font-style: italic;
-  color: #d1d5db;
-  /* gray-300 */
-}
-
-.markdown-content ul,
-.markdown-content ol {
-  margin: 1rem 0;
-  padding-left: 2rem;
-}
-
-.markdown-content li {
-  margin-bottom: 0.5rem;
-}
-
-.markdown-content img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 0.5rem;
-  margin: 1rem 0;
-}
-
-.markdown-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1rem 0;
-}
-
-.markdown-content th,
-.markdown-content td {
-  border: 1px solid #374151;
-  /* gray-700 */
-  padding: 0.5rem 1rem;
-  text-align: left;
-}
-
-.markdown-content th {
-  background-color: #374151;
-  /* gray-700 */
-  font-weight: 600;
-}
-
-.markdown-content hr {
-  border: none;
-  border-top: 1px solid #374151;
-  /* gray-700 */
-  margin: 2rem 0;
 }
 </style>
