@@ -37,6 +37,10 @@ const needsExpansion = (description: string, maxLength = 150) => {
 </script>
 
 <template>
+  <button v-if="needsExpansion(text, 150) && isDescriptionExpanded()" @click="toggleDescription()"
+    class="inline-flex items-center gap-1 text-sm text-sky-400 hover:text-sky-300 transition-colors mt-3 px-2 py-1 rounded hover:bg-sky-900/20">
+    {{ isDescriptionExpanded() ? '📖 收起' : '📑 展开更多' }}
+  </button>
   <div class="relative">
     <p class="text-gray-400 leading-relaxed transition-all duration-300"
       :class="{ 'line-clamp-4': !isDescriptionExpanded() && needsExpansion(text, 150) }">

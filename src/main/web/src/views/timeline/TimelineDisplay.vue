@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 py-8">
+  <div class="min-h-screen bg-gradient-to-br rounded-2xl from-gray-900 via-gray-800 to-gray-900 px-4 py-8 min-w-[660px]">
     <div class="max-w-6xl mx-auto">
       <!-- 头部区域 -->
       <div class="text-center mb-12">
@@ -110,7 +110,7 @@
 
               <!-- 时间线节点 -->
               <div
-                class="absolute left-1/2 translate-y-[-26px] transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white shadow-lg z-10 group-hover:translate-y-[-16px] group-hover:shadow-xl transition-all duration-300"
+                class="absolute left-1/2 translate-y-[-26px] transform -translate-x-1/2 w-6 h-6 rounded-full border-4 border-white shadow-lg z-10 group-hover:translate-y-[-16px] group-hover:shadow-xl transition-all duration-300 group-hover:bg-sky-500 group-hover:border-none"
                 :class="getPriorityNodeColor(timeline.priority)">
               </div>
 
@@ -189,7 +189,7 @@
       </div>
 
       <!-- 返回按钮 -->
-      <div class="absolute top-8 right-20">
+      <div class="absolute top-12 right-30 hidden md:block">
         <BackToHome />
       </div>
     </div>
@@ -346,9 +346,9 @@ const closeDetailModal = () => {
 // 工具方法
 const getPriorityNodeColor = (priority?: string) => {
   switch (priority) {
-    case 'high': return 'bg-red-500';
-    case 'medium': return 'bg-yellow-500';
-    case 'low': return 'bg-green-500';
+    // case 'high': return 'bg-red-500';
+    // case 'medium': return 'bg-yellow-500';
+    // case 'low': return 'bg-green-500';
     default: return 'bg-gray-500';
   }
 };
