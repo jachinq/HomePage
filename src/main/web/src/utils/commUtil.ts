@@ -46,7 +46,6 @@ export const parseAttachments = (timeline?: TimelineEntity): number[] => {
   if (!timeline) return [];
   if (!timeline.attachments) return [];
 
-  console.log("click card", timeline.attachments)
   // 假设附件格式为逗号分隔的文件名
   return timeline.attachments.split(',')
     .map(id => parseInt(id))

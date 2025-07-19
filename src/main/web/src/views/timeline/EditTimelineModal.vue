@@ -8,6 +8,7 @@ import FormInput from '../../components/form/FormInput.vue';
 // import FormRadio, { Option } from '../../components/form/FormRadio.vue';
 import { preProcFormData } from '../../utils/commUtil';
 import { uploadFiles, FileInfo, deleteFile, getFileListInIds } from '../../api/fileApi';
+import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -139,6 +140,15 @@ const removeSelectedFile = (index: number) => {
   selectedFiles.value.splice(index, 1);
 };
 
+const changeUploadedFilesOrder = (_oldIndex: number, _newIndex: number) => {
+  // const file = uploadedFiles.value[oldIndex];
+  // uploadedFiles.value.splice(oldIndex, 1);
+  // uploadedFiles.value.splice(newIndex, 0, file);
+  // uploadedFiles.value.forEach((file, index) => {
+  //   console.log(index, file.id)
+  // });
+};
+
 // 格式化文件大小
 const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 B';
@@ -157,9 +167,10 @@ const parseExistingAttachments = async () => {
   try {
     const result = await getFileListInIds(fileIds);
     if (result.success) {
-      result.data?.forEach((file: FileInfo) => {
-        if (uploadedFiles.value.some(f => f.id === file.id)) return;
-        uploadedFiles.value.push(file);
+      fileIds.forEach(id => {
+        if (uploadedFiles.value.some(f => f.id === id)) return;
+        const file = result.data.find((f: FileInfo) => f.id === id);
+        if (file) uploadedFiles.value.push(file);
       });
     }
   } catch (error) {
@@ -184,6 +195,7 @@ const onSubmit = async () => {
     // 清理空字段
     preProcFormData(submitData);
 
+    // return;
     // 处理标签（去重和格式化）
     if (submitData.tags) {
       const tags = submitData.tags.split(',')
@@ -255,7 +267,8 @@ watch(() => props.openModal, (newModal) => {
 
 <template>
   <div>
-    <SaveModal name="时间线事件" :open-modal="openModal" @on-submit="onSubmit" @on-close="onCancel" @on-delete="onDelete" :show-delete="false">
+    <SaveModal name="时间线事件" :open-modal="openModal" @on-submit="onSubmit" @on-close="onCancel" @on-delete="onDelete"
+      :show-delete="false">
       <template #form>
         <!-- 标题 -->
         <FormItem label="事件标题" required>
@@ -335,16 +348,24 @@ watch(() => props.openModal, (newModal) => {
           <div v-if="uploadedFiles.length > 0" class="mb-4">
             <span class="text-sm font-medium text-gray-300">已上传文件：</span>
             <div class="space-y-2 mt-2">
-              <div v-for="file in uploadedFiles" :key="file.id"
-                class="flex items-center justify-between p-2 bg-gray-700 rounded">
-                <div class="flex items-center">
-                  <span class="text-sm text-gray-300">{{ file.originalFileName }}</span>
-                  <span class="ml-2 text-xs text-gray-500">({{ formatFileSize(file.fileSize) }})</span>
-                </div>
-                <button type="button" @click="removeUploadedFile(file)" class="text-red-400 hover:text-red-300">
-                  删除
-                </button>
-              </div>
+
+
+              <Draggable :list="uploadedFiles" class="flex flex-col gap-2 items-start w-full" @change="changeUploadedFilesOrder">
+                <transition-group>
+                  <div v-for="file in uploadedFiles" :key="file.id"
+                    class="flex w-full items-center justify-between p-2 bg-gray-700 rounded cursor-pointer">
+                    <div class="flex items-center">
+                      <span class="text-sm text-gray-300">{{ file.originalFileName }}</span>
+                      <span class="ml-2 text-xs text-gray-500">({{ formatFileSize(file.fileSize) }})</span>
+                    </div>
+                    <button type="button" @click="removeUploadedFile(file)" class="text-red-400 hover:text-red-300">
+                      删除
+                    </button>
+                  </div>
+                </transition-group>
+              </Draggable>
+
+
             </div>
           </div>
 
