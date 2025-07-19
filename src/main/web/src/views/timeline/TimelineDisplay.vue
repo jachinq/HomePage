@@ -49,7 +49,7 @@
             </select>
           </div>
 
-          <div class="flex items-center gap-2">
+          <!-- <div class="flex items-center gap-2">
             <label class="text-gray-300 text-sm">优先级:</label>
             <select v-model="selectedPriority"
               class="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-sky-500 focus:outline-none transition-colors">
@@ -68,7 +68,7 @@
               <option value="createTime">按创建时间</option>
               <option value="priority">按优先级</option>
             </select>
-          </div>
+          </div> -->
 
           <button @click="toggleSortDirection"
             class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg border border-gray-600 transition-colors">
@@ -122,12 +122,12 @@
                 <!-- 卡片头部 -->
                 <div class="flex items-center justify-between mb-4">
                   <!-- 优先级标签 -->
-                  <div v-if="timeline.priority && index % 2 === 0"
+                  <!-- <div v-if="timeline.priority && index % 2 === 0"
                     class="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
                     :class="getPriorityBadgeColor(timeline.priority)">
                     {{ getPriorityIcon(timeline.priority) }}
                     {{ getPriorityText(timeline.priority) }}
-                  </div>
+                  </div> -->
 
                   <div class="flex items-center  gap-3 text-2xl font-bold text-gray-100  group-hover:underline">
                     <span class="flex items-center gap-1">
@@ -140,12 +140,12 @@
 
 
                   <!-- 优先级标签 -->
-                  <div v-if="timeline.priority && index % 2 === 1"
+                  <!-- <div v-if="timeline.priority && index % 2 === 1"
                     class="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium"
                     :class="getPriorityBadgeColor(timeline.priority)">
                     {{ getPriorityIcon(timeline.priority) }}
                     {{ getPriorityText(timeline.priority) }}
-                  </div>
+                  </div> -->
                 </div>
 
                 <!-- 事件标题 -->
@@ -175,9 +175,9 @@
                   </div>
 
                   <div class="flex items-center gap-2">
-                    <span v-if="timeline.isPublic" class="flex items-center gap-1 text-green-400">
+                    <!-- <span v-if="timeline.isPublic" class="flex items-center gap-1 text-green-400">
                       🌐 公开
-                    </span>
+                    </span> -->
                     <span v-if="timeline.attachments" class="flex items-center gap-1 text-blue-400">
                       📎 附件
                     </span>
@@ -365,7 +365,7 @@ const getPriorityNodeColor = (priority?: string) => {
   }
 };
 
-const getPriorityBadgeColor = (priority?: string) => {
+/* const getPriorityBadgeColor = (priority?: string) => {
   switch (priority) {
     case 'high': return 'bg-red-900/50 text-red-300 border border-red-800';
     case 'medium': return 'bg-yellow-900/50 text-yellow-300 border border-yellow-800';
@@ -390,7 +390,7 @@ const getPriorityText = (priority?: string) => {
     case 'low': return '低';
     default: return '';
   }
-};
+}; */
 
 const parseTags = (tags?: string) => {
   if (!tags) return [];

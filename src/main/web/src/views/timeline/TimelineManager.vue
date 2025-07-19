@@ -163,12 +163,12 @@ onMounted(() => {
           </option>
         </select>
         
-        <select v-model="selectedPriority" class="px-3 py-2 bg-gray-800 text-white rounded border border-gray-600">
+        <!-- <select v-model="selectedPriority" class="px-3 py-2 bg-gray-800 text-white rounded border border-gray-600">
           <option value="">全部优先级</option>
           <option value="high">高</option>
           <option value="medium">中</option>
           <option value="low">低</option>
-        </select>
+        </select> -->
         
         <button 
           @click="$router.push('/timeline')"

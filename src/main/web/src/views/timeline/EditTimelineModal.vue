@@ -5,7 +5,7 @@ import { saveTimeline } from '../../api/timelineApi';
 import SaveModal, { OpenModal } from '../../components/SaveModal.vue';
 import FormItem from '../../components/form/FormItem.vue';
 import FormInput from '../../components/form/FormInput.vue';
-import FormRadio, { Option } from '../../components/form/FormRadio.vue';
+// import FormRadio, { Option } from '../../components/form/FormRadio.vue';
 import { preProcFormData } from '../../utils/commUtil';
 import { uploadFiles, FileInfo, deleteFile, getFileListInIds } from '../../api/fileApi';
 
@@ -36,11 +36,11 @@ const uploadedFiles = ref<FileInfo[]>([]);
 const uploading = ref(false);
 
 // 优先级选项
-const priorityOptions: Option[] = [
-  { name: '高', value: 'high' },
-  { name: '中', value: 'medium' },
-  { name: '低', value: 'low' }
-];
+// const priorityOptions: Option[] = [
+//   { name: '高', value: 'high' },
+//   { name: '中', value: 'medium' },
+//   { name: '低', value: 'low' }
+// ];
 
 // 常用分类选项
 const categoryOptions = [
@@ -278,9 +278,9 @@ watch(() => props.openModal, (newModal) => {
         </FormItem>
 
         <!-- 优先级 -->
-        <FormItem label="优先级">
+        <!-- <FormItem label="优先级">
           <FormRadio v-model="formData.priority" :options="priorityOptions" />
-        </FormItem>
+        </FormItem> -->
 
         <!-- 标签 -->
         <FormItem label="标签">
@@ -342,7 +342,7 @@ watch(() => props.openModal, (newModal) => {
         </FormItem>
 
         <!-- 公开设置 -->
-        <FormItem label="公开设置">
+        <!-- <FormItem label="公开设置">
           <div class="flex items-center gap-4">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" v-model="formData.isPublic"
@@ -353,7 +353,7 @@ watch(() => props.openModal, (newModal) => {
           <p class="text-sm text-gray-500 mt-1">
             公开的事件可能会在时间线分享功能中显示给其他用户
           </p>
-        </FormItem>
+        </FormItem> -->
       </template>
     </SaveModal>
   </div>

@@ -42,14 +42,14 @@ const handleEdit = () => {
 // 获取优先级颜色
 const getPriorityColor = (priority?: string) => {
   switch (priority) {
-    case 'high': return 'border-red-500';
-    case 'medium': return 'border-yellow-500';
-    case 'low': return 'border-green-500';
+    // case 'high': return 'border-red-500';
+    // case 'medium': return 'border-yellow-500';
+    // case 'low': return 'border-green-500';
     default: return 'border-gray-500';
   }
 };
 
-// 获取优先级文本
+/* // 获取优先级文本
 const getPriorityText = (priority?: string) => {
   switch (priority) {
     case 'high': return '高';
@@ -67,7 +67,7 @@ const getPriorityBadgeColor = (priority?: string) => {
     case 'low': return 'bg-green-100 text-green-800';
     default: return 'bg-gray-100 text-gray-800';
   }
-};
+}; */
 
 // 解析标签
 const parseTags = (tags?: string) => {
@@ -88,14 +88,14 @@ const formatDateTime = (date?: string, time?: string) => {
     :class="getPriorityColor(timeline.priority)">
 
     <!-- 头部信息 -->
-    <div class="flex justify-between items-start mb-3">
+    <div class="flex justify-between items-start">
       <div class="flex-1">
         <div class="flex items-center gap-2 mb-1">
           <h3 class="text-lg font-semibold text-white">{{ timeline.title }}</h3>
-          <span v-if="timeline.priority" class="px-2 py-1 rounded text-xs font-medium"
+          <!-- <span v-if="timeline.priority" class="px-2 py-1 rounded text-xs font-medium"
             :class="getPriorityBadgeColor(timeline.priority)">
             {{ getPriorityText(timeline.priority) }}
-          </span>
+          </span> -->
         </div>
 
         <div class="flex items-center gap-4 text-sm text-gray-400">
@@ -103,12 +103,12 @@ const formatDateTime = (date?: string, time?: string) => {
           <span v-if="timeline.category" class="flex items-center gap-1">
             🏷️ {{ timeline.category }}
           </span>
-          <span v-if="timeline.isPublic" class="flex items-center gap-1">
+          <!-- <span v-if="timeline.isPublic" class="flex items-center gap-1">
             🌐 公开
           </span>
           <span v-else="timeline.isPublic" class="flex items-center gap-1">
             🔒 私密
-          </span>
+          </span> -->
         </div>
       </div>
 
@@ -158,12 +158,12 @@ const formatDateTime = (date?: string, time?: string) => {
     </div>
 
     <!-- 时间信息 -->
-    <div class="flex justify-between items-center text-xs text-gray-500">
+    <div class="flex justify-between items-center text-xs text-gray-500 gap-2">
       <span v-if="timeline.createTime">
-        创建于 {{ new Date(timeline.createTime).toLocaleString('zh-CN') }}
+        创建于 {{ formatDateTime(timeline.createTime) }}
       </span>
       <span v-if="timeline.updateTime && timeline.updateTime !== timeline.createTime">
-        更新于 {{ new Date(timeline.updateTime).toLocaleString('zh-CN') }}
+        更新于 {{ formatDateTime(timeline.updateTime) }}
       </span>
     </div>
   </div>
