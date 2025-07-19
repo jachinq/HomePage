@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, getCurrentInstance } from 'vue';
 import { TimelineEntity } from '../../interface/timeline';
-import { saveTimeline } from '../../api/timelineApi';
+import { deleteTimeline, saveTimeline } from '../../api/timelineApi';
 import SaveModal, { OpenModal } from '../../components/SaveModal.vue';
 import FormItem from '../../components/form/FormItem.vue';
 import FormInput from '../../components/form/FormInput.vue';
@@ -169,6 +169,7 @@ const parseExistingAttachments = async () => {
 
 // 提交表单
 const onSubmit = async () => {
+
   if (!validateForm()) return;
 
   try {
@@ -203,6 +204,17 @@ const onSubmit = async () => {
   } catch (error) {
     toast?.error('操作失败');
   }
+};
+
+const onDelete = async () => {
+  if (!props.oldData.id) return;
+  const result = await deleteTimeline(props.oldData.id);
+  if (result.success) {
+    toast?.success("删除成功✌️")
+  } else {
+    toast?.error(result.message)
+  }
+  emit('close', result.success)
 };
 
 // 取消操作
@@ -243,7 +255,7 @@ watch(() => props.openModal, (newModal) => {
 
 <template>
   <div>
-    <SaveModal name="时间线事件" :open-modal="openModal" @on-submit="onSubmit" @on-close="onCancel" :show-delete="false">
+    <SaveModal name="时间线事件" :open-modal="openModal" @on-submit="onSubmit" @on-close="onCancel" @on-delete="onDelete" :show-delete="false">
       <template #form>
         <!-- 标题 -->
         <FormItem label="事件标题" required>

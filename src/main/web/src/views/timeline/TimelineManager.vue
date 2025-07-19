@@ -117,15 +117,6 @@ const handleModalClose = (success?: boolean) => {
   }
 };
 
-// 处理删除成功
-const handleDeleteSuccess = (success?: boolean) => {
-  if (success) {
-    fetchTimelines();
-    fetchStatistics();
-    fetchCategories();
-  }
-};
-
 onMounted(() => {
   fetchTimelines();
   fetchCategories();
@@ -200,7 +191,6 @@ onMounted(() => {
           :key="timeline.id"
           :timeline="timeline"
           @edit="openEditModal"
-          @delete="handleDeleteSuccess"
         />
       </div>
     </div>
