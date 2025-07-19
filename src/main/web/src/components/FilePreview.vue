@@ -150,6 +150,16 @@
           </iframe>
         </div>
 
+        <!-- Markdown预览 -->
+        <div v-else-if="isMarkdown" class="h-full overflow-auto p-6">
+          <div v-if="markdownHtml" class="max-w-none">
+            <div v-html="markdownHtml" class="markdown-content"></div>
+          </div>
+          <div v-else class="text-center text-gray-400 mt-8">
+            <p>无法预览该 Markdown 文件</p>
+          </div>
+        </div>
+
         <!-- 文本预览 -->
         <div v-else-if="isText" class="h-full overflow-auto p-4">
           <div v-if="textContent" class="max-w-full">
@@ -201,6 +211,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import { getFilePreviewUrl, getFileDownloadUrl, getFileInfo, FileInfo } from '../api/fileApi'
+import { marked } from 'marked' 
 
 interface Props {
   fileIds?: number[]
@@ -225,6 +236,7 @@ const isLoading = ref(false)
 const hasError = ref(false)
 const errorMessage = ref('')
 const textContent = ref('')
+const markdownHtml = ref('')
 const currentFileInfo = ref<FileInfo | null>(props.fileInfo || null)
 const currentFileIndex = ref(0)
 
@@ -257,6 +269,10 @@ const mimeType = computed(() => {
   return fileInfo.value?.mimeType || ''
 })
 
+const fileName = computed(() => {
+  return fileInfo.value?.originalFileName || ''
+})
+
 const isImage = computed(() => {
   return mimeType.value.startsWith('image/')
 })
@@ -273,9 +289,19 @@ const isPDF = computed(() => {
   return mimeType.value === 'application/pdf'
 })
 
+const isMarkdown = computed(() => {
+  const markdownTypes = ['text/markdown', 'text/x-markdown', 'application/x-markdown']
+  const markdownExtensions = ['.md', '.markdown', '.mdown', '.mkd']
+  
+  return markdownTypes.includes(mimeType.value) || 
+         markdownExtensions.some(ext => fileName.value.toLowerCase().endsWith(ext))
+})
+
 const isText = computed(() => {
-  return mimeType.value.startsWith('text/') ||
+  return !isMarkdown.value && (
+    mimeType.value.startsWith('text/') ||
     ['application/json', 'application/javascript', 'application/xml'].includes(mimeType.value)
+  )
 })
 
 const imageStyle = computed(() => {
@@ -322,6 +348,7 @@ const loadFileInfo = async () => {
   hasError.value = false
   errorMessage.value = ''
   textContent.value = ''
+  markdownHtml.value = ''
 
   try {
     if (!props.fileInfo) {
@@ -333,8 +360,8 @@ const loadFileInfo = async () => {
       }
     }
 
-    // 如果是文本文件，加载文本内容
-    if (isText.value) {
+    // 如果是文本文件或 Markdown 文件，加载文本内容
+    if (isText.value || isMarkdown.value) {
       await loadTextContent()
     }
   } catch (error) {
@@ -353,7 +380,24 @@ const loadTextContent = async () => {
     if (!response.ok) {
       throw new Error('加载文本内容失败')
     }
-    textContent.value = await response.text()
+    const content = await response.text()
+    
+    if (isMarkdown.value) {
+      // 使用简单的 Markdown 解析器或者 marked 库
+      try {
+        // 如果安装了 marked 库，使用这行代码：
+        // markdownHtml.value = marked.parse(content)
+        
+        // 临时使用简单解析器
+        markdownHtml.value = await marked.parse(content)
+      } catch (error) {
+        console.error('Markdown 解析失败:', error)
+        // 如果解析失败，回退到纯文本显示
+        textContent.value = content
+      }
+    } else {
+      textContent.value = content
+    }
   } catch (error) {
     console.error('加载文本内容失败:', error)
   }
@@ -368,6 +412,7 @@ const close = () => {
   hasError.value = false
   errorMessage.value = ''
   textContent.value = ''
+  markdownHtml.value = '' // 重置 Markdown HTML
   showTip.value = false
   if (tipTimer.value) {
     clearTimeout(tipTimer.value)
@@ -675,5 +720,142 @@ video {
 /* PDF iframe 深色背景 */
 iframe {
   background: #111827;
+}
+
+/* Markdown 内容样式 - 深色主题 */
+.markdown-content {
+  color: #e5e7eb; /* gray-200 */
+  line-height: 1.7;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  color: #ffffff;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.markdown-content h1 {
+  font-size: 2rem;
+  border-bottom: 2px solid #374151;
+  padding-bottom: 0.5rem;
+}
+
+.markdown-content h2 {
+  font-size: 1.5rem;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 0.3rem;
+}
+
+.markdown-content h3 {
+  font-size: 1.25rem;
+}
+
+.markdown-content h4 {
+  font-size: 1.1rem;
+}
+
+.markdown-content p {
+  margin-bottom: 1rem;
+}
+
+.markdown-content a {
+  color: #60a5fa; /* blue-400 */
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.markdown-content a:hover {
+  color: #93c5fd; /* blue-300 */
+}
+
+.markdown-content strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.markdown-content code {
+  background-color: #374151; /* gray-700 */
+  color: #fbbf24; /* amber-400 */
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+}
+
+.markdown-content pre {
+  background-color: #1f2937; /* gray-800 */
+  border: 1px solid #374151; /* gray-700 */
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  color: #e5e7eb; /* gray-200 */
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid #6b7280; /* gray-500 */
+  background-color: #374151; /* gray-700 */
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #d1d5db; /* gray-300 */
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5rem;
+}
+
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.markdown-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid #374151; /* gray-700 */
+  padding: 0.5rem 1rem;
+  text-align: left;
+}
+
+.markdown-content th {
+  background-color: #374151; /* gray-700 */
+  font-weight: 600;
+}
+
+.markdown-content hr {
+  border: none;
+  border-top: 1px solid #374151; /* gray-700 */
+  margin: 2rem 0;
 }
 </style>
