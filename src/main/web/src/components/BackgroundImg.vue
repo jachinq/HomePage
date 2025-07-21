@@ -48,7 +48,7 @@ watch(() => state.config, (newVal, oldVal) => {
     <!-- 背景图片层 -->
     <div ref="bgImg"
       class="w-full h-full fixed top-0 left-0 bg-cover bg-center bg-no-repeat transition-all duration-500 ease-in-out" :class="{ 'scale-110': isLoading }">
-      <div class="w-full h-full bg-gray-900/30" :class="{ 'backdrop-blur-sm': isLoading }"></div>
+      <div class="w-full h-full bg-gray-900/10" :class="{ 'backdrop-blur-sm': isLoading }"></div>
     </div>
   </div>
 </template>
