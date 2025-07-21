@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import { bing } from "../api/corsApi.js";
 import SearchInput from "../components/SearchInput.vue";
 import TimeDisplay from "../components/TimeDisplay.vue";
-import UserAvatar from "../components/UserAvatar.vue";
 import { useUserStore } from '../stores/useUserStore.js'
 import { useRouter } from 'vue-router';
 
@@ -34,13 +33,6 @@ const handleSearch = (searchValueTmp: string) => {
 
   if (searchText) {
     window.open(searchUrl.replace(keyWordTemplate, searchText), '_blank');
-  }
-}
-const handleUser = () => {
-  if (state.isLogin) {
-    routeTo('/user')
-  } else {
-    routeTo('/login')
   }
 }
 
@@ -93,23 +85,22 @@ const selectedClass = (index: number) => {
 
   return className
 }
+ 
+const handleTimeClick = () => {
+  if (state.isLogin) {
+    routeTo('/app')}
+  else {
+    routeTo('/login')
+  }
+}
 </script>
 
 <template>
   <div class="min-h-[calc(100vh-140px)] min-w-full flex flex-col items-center justify-center px-16 relativize">
     <div class="mask w-full h-full absolute top-0 left-0 bg-black opacity-40"></div>
 
-    <div class="z-10">
-      <TimeDisplay/>
-    </div>
-
-    <div v-if="state.isLogin" class="flex gap-2 mt-1 z-10">
-      <span class="text-center text-sm text-gray-400 cursor-pointer hover:underline"
-            @click="$router.push('/app')">应用</span>
-      <span class="text-center text-sm text-gray-400 cursor-pointer hover:underline"
-            @click="$router.push('/habit')">习惯</span>
-      <span class="text-center text-sm text-gray-400 cursor-pointer hover:underline"
-            @click="$router.push('/timeline')">时间线</span>
+    <div class="z-10 mb-2">
+      <TimeDisplay @click="handleTimeClick"/>
     </div>
 
     <div class="my-2 flex w-full h-full text-center justify-center items-center">
@@ -125,11 +116,6 @@ const selectedClass = (index: number) => {
           </div>
         </div>
       </div>
-    </div>
-
-
-    <div class="fixed top-16 right-16 z-50">
-      <UserAvatar :avatar="state.user?.avatar" @click="handleUser"/>
     </div>
     
   </div>

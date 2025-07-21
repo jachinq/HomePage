@@ -7,6 +7,7 @@ import ConfigModal from "./ConfigModal.vue";
 import { getAppConfig } from "@/api/appConfigApi";
 import { AppConfig, AppType } from "@/interface/appset";
 import AppCardList from "@/views/appset/AppCardList.vue";
+import SystemRoute from './SystemRoute.vue';
 
 const searchValue = ref("");
 const openConfig = ref(false);
@@ -51,9 +52,11 @@ refresh();
 
 <template>
   <div class="min-h-full min-w-lg">
+    
+      <SystemRoute :config-data="configData" />
+     
 
-    <div class="mb-2 flex items-center justify-between">
-      <div class="flex mt-2 items-center gap-4">
+     <div class="flex mt-2 items-center gap-4">
         <span class="text-2xl font-bold">App Set</span>
         <span class="hover:text-blue-400 cursor-pointer select-none underline" @click="openConfigModal()">配置</span>
         <div class=" flex items-center gap-2">
@@ -66,8 +69,6 @@ refresh();
           </Switch>
         </div>
       </div>
-      <BackToHome />
-    </div>
 
     <div class="my-2">
       <SearchInput @search="(value) => searchValue = value" />
