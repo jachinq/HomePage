@@ -86,10 +86,11 @@ const selectedClass = (index: number) => {
 
   return className
 }
- 
+
 const handleTimeClick = () => {
   if (state.isLogin) {
-    routeTo('/app')}
+    routeTo('/app')
+  }
   else {
     routeTo('/login')
   }
@@ -101,24 +102,12 @@ const handleTimeClick = () => {
     <div class="mask w-full h-full absolute top-0 left-0 bg-black opacity-40"></div>
 
     <div class="z-10 mb-2">
-      <TimeDisplay @click="handleTimeClick"/>
+      <TimeDisplay @click="handleTimeClick" />
     </div>
 
-    <div class="my-2 flex w-full h-full text-center justify-center items-center">
-      <div class="relative">
-        <SearchInput @search="handleBingRecommend" @enter="handleSearch" @keydown="handleKeydown"
-                     custom-class="sm:min-w-[400px] md:min-w-[500px] lg:min-w-[600px]"/>
-        <div v-if="showTextSelect" class="absolute top-12 left-0 right-0 z-10 flex flex-col justify-between rounded-lg"
-             v-click-outside="()=>showTextSelect=false">
-          <div v-for="(item, index) in searchTexts" @click="handleSearch(item.Txt)"
-               class="px-4 py-2 hover:bg-gray-600 cursor-pointer select-none"
-               :class="selectedClass(index)">
-            <span>{{ item.Txt }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
+    <SearchInput custom-class="sm:min-w-[400px] md:min-w-[500px] lg:min-w-[600px]" />
+
+
     <BackgroundImg />
   </div>
 </template>
