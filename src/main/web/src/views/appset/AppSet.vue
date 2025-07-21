@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Switch } from "@headlessui/vue";
-import BackToHome from "@/components/BackToHome.vue";
 import SearchInput from "@/components/SearchInput.vue";
 import ConfigModal from "./ConfigModal.vue";
 import { getAppConfig } from "@/api/appConfigApi";

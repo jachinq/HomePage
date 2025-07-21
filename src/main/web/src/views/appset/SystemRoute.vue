@@ -10,22 +10,14 @@ const appSet = ref<AppSet[]>([
   { type: AppType.SYS, id: 4, name: '设置', icon: '⚙️', outerUrl: '/setting' },
 ]);
 
-const openApp = (app: AppSet) => {
-  window.open(app.outerUrl, '_blank');
-}
-
 </script>
 
 <template>
   <div class="flex-grow mt-2">
-    <div class="flex mt-2 items-center gap-4">
-      <!-- <span class="text-2xl font-bold">系统应用</span> -->
-    </div>
-
     <div class="mb-2 flex items-center justify-between">
 
       <div class="flex flex-wrap gap-3 items-center">
-        <div v-for="app in appSet" :key="app.id" @click="openApp(app)"
+        <div v-for="app in appSet" :key="app.id" @click="$router.push(app.outerUrl || '')"
           class="group flex items-center gap-2 text-xl cursor-pointer hover:text-sky-300">
           <div class="group-hover:scale-120 transition-all duration-300">
             {{ app.icon }}
