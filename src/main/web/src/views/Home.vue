@@ -5,6 +5,7 @@ import SearchInput from "../components/SearchInput.vue";
 import TimeDisplay from "../components/TimeDisplay.vue";
 import { useUserStore } from '../stores/useUserStore.js'
 import { useRouter } from 'vue-router';
+import BackgroundImg from '@/components/BackgroundImg.vue';
 
 interface SearchText {
   Txt: string
@@ -118,5 +119,6 @@ const handleTimeClick = () => {
       </div>
     </div>
     
+    <BackgroundImg />
   </div>
 </template>

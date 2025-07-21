@@ -7,8 +7,6 @@ import Habit from '../views/habit/Habit.vue'
 import TimelineManager from '../views/timeline/TimelineManager.vue'
 import TimelineDisplay from '../views/timeline/TimelineDisplay.vue'
 import User from '@/views/User.vue'
-import {useGlobalConfigStore} from "@/stores/useGlobalConfigStore.ts";
-import {watch} from "vue";
 
 const routes = [
     {path: '/', name: '主页', component: Home},
@@ -26,28 +24,8 @@ const router = createRouter({
     routes
 })
 
-const {state} = useGlobalConfigStore();
-watch(()=> state.config, (value)=>{
-    if (value) setBgUrl()
-})
-
-const setBgUrl = (pathname: string = window.location.pathname) => {
-    const defaultBg = () => {
-        document.body.style.backgroundImage = 'linear-gradient(to bottom, #020917, #101725)'
-    }
-    // 判断一下地址是否为内网地址
-    if (pathname !== '/') {
-        defaultBg();
-    } else if (state.config?.bgUrl) {
-        document.body.style.backgroundImage = `url(${state.config?.bgUrl})`
-    } else {
-        defaultBg();
-    }
-}
-
 router.beforeEach((to, _from, next) => {
     if (typeof to.name === "string") document.title = to.name;
-    setBgUrl(to.path);
     next()
 })
 

@@ -1,6 +1,5 @@
 import fetchUtil from "../utils/fetchUtil.ts";
 import { Result } from "../utils/entity.ts";
-import {ClientConfig} from "@rsbuild/core";
 
 const url = "/api/globalConfig";
 export function getGlobalConfig(): Promise<Result> {

@@ -13,18 +13,12 @@ const init = async () => {
     const result: any = await getGlobalConfig();
     if (result.success) {
         state.config = result.data;
+        console.log("init globalConfigStore", state.config)
     }
 }
 init()
 
 export function useGlobalConfigStore() {
-    const refresh = () => {
-        init()
-    }
-
-    return {
-        state,
-        refresh,
-    }
+    return { state }
 }
 
