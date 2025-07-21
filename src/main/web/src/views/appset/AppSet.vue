@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Switch } from "@headlessui/vue";
-import SearchInput from "@/components/SearchInput.vue";
 import ConfigModal from "./ConfigModal.vue";
 import { getAppConfig } from "@/api/appConfigApi";
 import { AppConfig, AppType } from "@/interface/appset";
 import AppCardList from "@/views/appset/AppCardList.vue";
 import SystemRoute from './SystemRoute.vue';
+import FormInput from '@/components/form/FormInput.vue';
 
 const searchValue = ref("");
 const openConfig = ref(false);
@@ -70,7 +70,7 @@ refresh();
       </div>
 
     <div class="my-2">
-      <SearchInput @search="(value) => searchValue = value" />
+      <FormInput v-model="searchValue" placeholder="搜索" class="w-full" />
     </div>
 
     <AppCardList :search-value="searchValue" :config-data="configData" :type="AppType.APP" />

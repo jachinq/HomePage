@@ -7,6 +7,7 @@ import Loading from '../../components/Loading.vue';
 import TimelineCard from './TimelineCard.vue';
 import EditTimelineModal from './EditTimelineModal.vue';
 import SearchInput from '../../components/SearchInput.vue';
+import FormInput from '@/components/form/FormInput.vue';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -64,7 +65,6 @@ const fetchStatistics = async () => {
 
 // 搜索时间线
 const handleSearch = async (keyword: string) => {
-  searchKeyword.value = keyword;
   if (keyword.trim()) {
     // 这里可以调用搜索API
     // await searchTimeline(keyword);
@@ -142,7 +142,7 @@ onMounted(() => {
     <div class="flex flex-col md:flex-row gap-4 mb-4">
       <!-- 搜索框 -->
       <div class="flex-1">
-        <SearchInput @search="handleSearch" placeholder="搜索时间线事件..." />
+        <FormInput v-model="searchKeyword" @input="handleSearch" placeholder="搜索时间线事件..." />
       </div>
       
       <!-- 过滤器 -->

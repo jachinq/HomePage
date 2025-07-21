@@ -105,11 +105,3 @@ const openWithOuterMode = (app: AppSet) => {
     </div>
   </div>
 </template>
-
-<style>
-.icon svg {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-</style>
