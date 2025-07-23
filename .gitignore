@@ -10,6 +10,7 @@ target/
 /src/main/resources/static/*
 /src/main/resources/db/
 /src/main/resources/files/
+/uploads/
 
 ### STS ###
 .apt_generated
