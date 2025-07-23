@@ -4,6 +4,9 @@ import { validate } from "../api/AuthApi.ts";
 import storage from "../utils/storage.ts";
 import { User } from '@/interface/user.ts';
 import { getUserInfo } from '@/api/userApi.ts';
+import { useGlobalConfigStore } from './useGlobalConfigStore.ts';
+
+const { resetConfig, initConfig } = useGlobalConfigStore()
 
 const state = reactive<{
     user: User | null,
@@ -35,9 +38,11 @@ const validateToken = async () => {
 validateToken();
 
 export function useUserStore() {
-    function login(userData: User, router?: () => {}) {
-        state.user = userData
+    function login(result: {token: string, user: User}, router?: () => {}) {
+        storage.setToken(result?.token || '') // 存储token
+        state.user = result?.user || null
         state.isLogin = true
+        initConfig()
         router && router()
     }
 
@@ -46,6 +51,7 @@ export function useUserStore() {
         state.isLogin = false
         storage.removeToken()
         router && router()
+        resetConfig()
     }
 
     return {

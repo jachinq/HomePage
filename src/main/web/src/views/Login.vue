@@ -2,7 +2,6 @@
 import { ref, getCurrentInstance } from "vue";
 import { login } from "../api/AuthApi.js";
 import { useUserStore } from '../stores/useUserStore.ts'
-import storage from "../utils/storage.js";
 import { useRouter } from "vue-router";
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
@@ -20,8 +19,6 @@ const handleLogin = async () => {
   });
   if (result.success) {
     userStore.login(result.data)
-    // token写入storage
-    storage.setToken(result.data?.token || '')
     username.value = result.data?.user?.username || ''
     $toast.success('欢迎回来~' + username.value)
     $router.push('/')

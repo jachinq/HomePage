@@ -2,7 +2,7 @@
 import { useGlobalConfigStore } from '@/stores/useGlobalConfigStore';
 import { watch, ref } from 'vue';
 
-const { state } = useGlobalConfigStore();
+const { golabalConfig } = useGlobalConfigStore();
 
 // 默认背景渐变
 const bgImg = ref();
@@ -37,8 +37,8 @@ const loadBackgroundImage = async (bgUrl: string) => {
 };
 
 // 监听配置变化
-watch(() => state.config, (newVal, oldVal) => {
-  console.log('配置变化，更新背景图片:', newVal, oldVal);
+watch(() => golabalConfig.config, (newVal, _oldVal) => {
+  // console.log('配置变化，更新背景图片:', newVal, oldVal);
   newVal && loadBackgroundImage(newVal.bgUrl)
 }, { immediate: true, deep: true });
 </script>

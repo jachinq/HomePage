@@ -122,9 +122,9 @@ const handleLogout = () => {
   logout(() => router.push('/'))
 }
 
-let { state, refresh } = useGlobalConfigStore();
-const configForm = ref<any>({ ...state.config });
-watch(() => state.config, (value) => {
+let { golabalConfig, initConfig } = useGlobalConfigStore();
+const configForm = ref<any>({ ...golabalConfig.config });
+watch(() => golabalConfig.config, (value) => {
   configForm.value = value
 })
 const handleSaveConfig = async () => {
@@ -132,7 +132,7 @@ const handleSaveConfig = async () => {
   preProcFormData(data)
   const result = await saveGlobalConfig(data);
   if (result.success) {
-    refresh()
+    initConfig()
     toast.success(result.message)
     openConfigModal.value.add = false
   } else {
