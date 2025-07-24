@@ -150,7 +150,7 @@ const handleCompositionStart = () => {
 
 const handleCompositionEnd = () => {
   isComposing.value = false
-  handleSearch()
+  handleRecommend(searchQuery.value)
 }
 
 const handleSearch = (searchValueTmp: string = '') => {
