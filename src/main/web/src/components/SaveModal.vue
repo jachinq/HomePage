@@ -14,7 +14,7 @@ const props = defineProps<{
   cancelText?: string
   defaultData?: any
 }>()
-const emitList = ["onClose", "onDelete", "onSubmit", "onCancel", "onReset"]
+const emitList = ["onOnClose", "onOnDelete", "onOnSubmit", "onOnCancel", "onOnReset"]
 const emit = defineEmits(["onClose", "onDelete", "onSubmit", "onCancel", "onReset"])
 
 // 判断父组件是否有对应的事件监听
@@ -23,7 +23,7 @@ onMounted(() => {
   const internal = getCurrentInstance();
   const props = (internal?.vnode.props || {}) as Record<string, any>
   const check = (key: string) => typeof props[key] === 'function'
-  hasEmitListener.value = emitList.some(key => check(key))
+  emitList.forEach(key => hasEmitListener.value[key] = check(key))
 })
 
 const handleClose = (value: any) => {
@@ -34,7 +34,8 @@ const handleSubmit = () => {
   emit("onSubmit")
 }
 const handleCancel = () => {
-  if (hasEmitListener.value.onCancel) {
+  // console.log(hasEmitListener.value)
+  if (hasEmitListener.value.onOnCancel) {
     emit("onCancel")
   } else {
     handleClose(false)
