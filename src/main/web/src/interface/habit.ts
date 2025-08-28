@@ -23,3 +23,12 @@ export interface HabitLogEntity {
     createTime?: string;
     updateTime?: string;
 }
+
+export interface CalendarProp {
+  key: string,
+  number: number,
+  date: string,
+  isToday?: boolean
+  habit?: HabitEntity
+  logs?: HabitLogEntity[]
+}

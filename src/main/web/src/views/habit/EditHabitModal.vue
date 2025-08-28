@@ -78,8 +78,8 @@ watch(props, (newVal, _) => {
 
         <FormItem label="完成图标-失败图标">
           <template #label>
-            <a href="https://www.iconfont.cn/" class="text-blue-400 hover:text-blue-500"
-               target="_blank">更多svg</a>
+            <a href="https://www.emojiall.com/zh-hans" class="text-blue-400 hover:text-blue-500"
+               target="_blank">更多Emoji图标</a>
           </template>
           <FormInput v-model="formData.doneIcon" placeholder="完成状态下显示在日历上的图标" width="1/2"/>
           <FormInput v-model="formData.failIcon" placeholder="失败状态下显示在日历上的图标" width="1/2"/>

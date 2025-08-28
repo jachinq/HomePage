@@ -1,17 +1,8 @@
 <script setup lang="ts">
 
 import { onMounted, onUnmounted, ref } from 'vue';
-import {HabitEntity, HabitLogEntity} from "../interface/habit.ts";
+import {CalendarProp} from "../interface/habit.ts";
 import { randomString } from '@/utils/commUtil.ts';
-
-interface DateProp {
-  key: string,
-  number: number,
-  date: string,
-  isToday?: boolean
-  habit?: HabitEntity
-  log?: HabitLogEntity
-}
 
 const props = withDefaults(defineProps<{
   month?: number,
@@ -29,7 +20,7 @@ const year = ref<number>(props.year || new Date().getFullYear()); // Default to 
 const dates = ref(() => {
   const today = new Date().toISOString().split('T')[0];
 
-  const dates: DateProp[] = [];
+  const dates: CalendarProp[] = [];
   const startDate = new Date(year.value, month.value - 1, 1);
   const endDate = new Date(year.value, month.value, 0);
   let startDay = startDate.getDay()
@@ -44,18 +35,25 @@ const dates = ref(() => {
   }
 
   const map: { [key: string]: any } = {}
-  props.logs?.forEach(log => map[log.date] = log);
+  props.logs?.forEach(log => {
+    let logs = map[log.date];
+    if (!logs) {
+      logs = [];
+      map[log.date] = logs;
+    }
+    logs.push(log);
+  });
 
   // Fill cells with dates
   for (let date = 1; date <= endDate.getDate(); date++) {
     const currentDate = new Date(year.value, month.value - 1, date + 1).toISOString().split('T')[0];
-    const log = map[currentDate];
+    const logs = map[currentDate];
     dates.push({
       key: randomString(),
       number: date,
       date: currentDate,
       isToday: today === currentDate,
-      log
+      logs
     });
   }
   // console.log('Generated dates array:', dates, map);
@@ -83,7 +81,7 @@ const nextMonth = () => {
 };
 
 const emit = defineEmits(['dateClick', 'dateChange'])
-const handleDate = (date: DateProp) => {
+const handleDate = (date: CalendarProp) => {
   emit('dateClick', date)
 }
 

@@ -23,19 +23,19 @@ export const preProcFormData = (formData: any) => {
         if (formData[key] == null || formData[key] == undefined) {
             delete formData[key];
         }
-        if (formData.hasOwnProperty(key)) {
+        else if (formData.hasOwnProperty(key)) {
             if (typeof formData[key] === "string") {
                 formData[key] = formData[key].trim();
             }
         }
-        if (Array.isArray(formData[key])) {
+        else if (Array.isArray(formData[key])) {
             for (let i = 0; i < formData[key].length; i++) {
                 if (typeof formData[key][i] === "string") {
                     formData[key][i] = formData[key][i].trim();
                 }
             }
         }
-        if (typeof formData[key] === "object") {
+        else if (typeof formData[key] === "object") {
             formData[key] = preProcFormData(formData[key]);
         }
     }

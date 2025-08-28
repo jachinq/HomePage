@@ -5,9 +5,10 @@ import { getCurrentInstance, ref } from 'vue';
 import Tooltips from "../../components/Tooltips.vue";
 import EditHabitModal from "./EditHabitModal.vue";
 import EditHabitLogModal from "./EditHabitLogModal.vue";
-import { HabitEntity, HabitLogEntity } from "../../interface/habit.ts";
+import { CalendarProp, HabitEntity, HabitLogEntity } from "../../interface/habit.ts";
 import { getHabitList, getHabitLogList } from "../../api/habitApi.ts";
 import BackToHome from "../../components/BackToHome.vue";
+import EditAllHabitLogModal from './EditAllHabitLogModal.vue';
 
 const context = getCurrentInstance()?.appContext.config.globalProperties;
 const toast = context?.$toast;
@@ -15,18 +16,19 @@ const toast = context?.$toast;
 const habits = ref<HabitEntity[]>([]);
 const loading = ref(false);
 const activeHabit = ref<HabitEntity | any>({});
-const activeHabitLog = ref({});
+const activeHabitLog = ref<CalendarProp|any>({});
 const habitLogs = ref<HabitLogEntity[]>([]);
 const currentMonthHabitLogs = ref<HabitLogEntity[]>([]);
 const openHabitModal = ref({ add: false, set: false });
 const openHabitLogModal = ref({ add: false, set: false });
+const openAllHabitLogModal = ref({ add: false, set: false }); // 全部习惯记录的操作弹窗
 const currentDate = ref<{ month: number, year: number }>({ month: new Date().getMonth() + 1, year: new Date().getFullYear() });
 
 const fetchHabits = async () => {
   loading.value = true;
   const result = await getHabitList({});
   if (result.success) {
-    habits.value = result.data
+    habits.value = [{ id: 0, name: '全部' }, ...result.data]
     if (habits.value && habits.value.length > 0) {
       activeHabit.value = habits.value[0];
       fetchHabitLogs();
@@ -63,6 +65,12 @@ const handelEditHabitLogModelClose = (success: any) => {
     fetchHabitLogs()
   }
 }
+const handelEditAllHabitLogModelClose = (success: any) => {
+  openAllHabitLogModal.value = { add: false, set: false }
+  if (success === true) {
+    fetchHabitLogs()
+  }
+}
 
 const handleChangeHabit = (habit: HabitEntity) => {
   if (activeHabit.value.id == habit.id) return
@@ -71,14 +79,23 @@ const handleChangeHabit = (habit: HabitEntity) => {
   fetchHabitLogs();
 }
 
-const handleDateClick = (date: any) => {
-  if (!activeHabit.value?.id) {
-    toast.warn("先选择习惯再做记录")
+const handleDateClick = (date: CalendarProp) => {
+  // console.log('handleDateClick', date);
+  if (!activeHabit.value?.id == null || activeHabit.value?.id === undefined) {
+    toast.warning("先选择习惯再做记录")
     return
   }
-  activeHabitLog.value = date?.log;
+
+  if (activeHabit.value?.id === 0) {
+    openAllHabitLogModal.value = { add: true, set: false };
+    activeHabitLog.value = date;
+    return
+  }
+
+  activeHabitLog.value = date.logs;
   if (activeHabitLog.value) {
     openHabitLogModal.value = { add: false, set: true };
+    activeHabitLog.value = activeHabitLog.value[0];
   } else {
     openHabitLogModal.value = { add: true, set: false };
     activeHabitLog.value = {
@@ -103,6 +120,20 @@ const changeStatistic = () => {
   })
 }
 fetchHabits();
+
+const getHabitIcon = (log: HabitLogEntity) => {
+  // console.log('getHabitIcon', log);
+  const habitId = log.habitId || -1;
+  const habit = habits.value.find(h => h.id === habitId);
+  if (habit) {
+    if (log.done) {
+      return habit.doneIcon || '✅'
+    } else {
+      return habit.failIcon || '❌'
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -153,10 +184,12 @@ fetchHabits();
     <div class="flex items-center justify-center w-full h-full">
       <HabitCalendar :habit="activeHabit" :logs="habitLogs" v-slot="{ date }" @date-click="handleDateClick"
         @date-change="handleDateChange">
-        <div v-if="date?.log">
-          <Tooltips :text="date.log?.extra || ''">
-            <span class="text-lg">{{ date.log?.done ? activeHabit?.doneIcon : activeHabit?.failIcon }}</span>
-          </Tooltips>
+        <div v-if="date?.logs && date.logs.length > 0">
+          <template v-for="log in date.logs">
+            <Tooltips :text="log?.extra || ''">
+              <span class="text-lg">{{ getHabitIcon(log) }}</span>
+            </Tooltips>
+          </template>
         </div>
       </HabitCalendar>
     </div>
@@ -166,5 +199,6 @@ fetchHabits();
     <EditHabitModal :open-modal="openHabitModal" :oldData="activeHabit" @close="handelEditHabitModelClose" />
     <EditHabitLogModal :open-modal="openHabitLogModal" :oldData="activeHabitLog" :habit="activeHabit"
       @close="handelEditHabitLogModelClose" />
+    <EditAllHabitLogModal :open-modal="openAllHabitLogModal" :oldData="activeHabitLog" @close="handelEditAllHabitLogModelClose"/>
   </div>
 </template>
