@@ -45,6 +45,14 @@ export function saveHabitLog(data: any): Promise<Result> {
             .catch(err => reject(err))
     );
 }
+export function batchSaveHabitLog(data: any): Promise<Result> {
+
+    return new Promise((resolve, reject) =>
+        FetchUtil.post('/api/habitLog/batchSave', data).then(res => res.json())
+            .then(data => resolve(data))
+            .catch(err => reject(err))
+    );
+}
 
 export function deleteHabitLog(data: any): Promise<Result> {
 

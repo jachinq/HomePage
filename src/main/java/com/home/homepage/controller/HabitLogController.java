@@ -2,6 +2,7 @@ package com.home.homepage.controller;
 
 import com.home.homepage.entity.Habit;
 import com.home.homepage.entity.HabitLog;
+import com.home.homepage.entity.modal.BatchSaveHabitLog;
 import com.home.homepage.entity.modal.HabitLogListModel;
 import com.home.homepage.service.HabitLogService;
 import com.home.homepage.service.HabitService;
@@ -29,6 +30,11 @@ public class HabitLogController {
     @PostMapping("/save")
     public Result save(@RequestBody HabitLog dto){
         return habitLogService.save(dto);
+    }
+
+    @PostMapping("/batchSave")
+    public Result batchSave(@RequestBody BatchSaveHabitLog dto){
+        return habitLogService.batchSave(dto);
     }
 
     @PostMapping("/del")

@@ -13,4 +13,6 @@ import java.util.List;
 @Repository
 public interface HabitLogRepository extends JpaRepository<HabitLog, Long> {
     List<HabitLog> findAllByUserIdAndHabitId(Long uid, Integer habitId);
+
+    List<HabitLog> findAllByUserId(Long uid);
 }
