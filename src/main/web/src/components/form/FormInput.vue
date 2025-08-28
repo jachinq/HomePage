@@ -2,7 +2,7 @@
 
 import { ref } from 'vue'
 
-type input = string | number
+type input = any
 
 const props = withDefaults(defineProps<{
   modelValue?: input,

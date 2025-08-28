@@ -3,7 +3,7 @@
 import {RadioGroup, RadioGroupOption} from "@headlessui/vue";
 
 export interface Option {
-  value: number | string,
+  value: number | string | boolean,
   name: string
 }
 
@@ -20,7 +20,7 @@ const handleChange = (value: any) => {
 </script>
 
 <template>
-  <RadioGroup class="space-x-4 flex flex-row" :default-value="props.modelValue" :model-value="props.modelValue" @update:model-value="handleChange"
+  <RadioGroup class="space-x-4   flex flex-row" :default-value="props.modelValue" :model-value="props.modelValue" @update:model-value="handleChange"
               name="type">
     <RadioGroupOption v-for="option in options" v-slot="{ checked }" :value="option.value" class="cursor-pointer">
       <div class="flex items-center space-x-2 text-sm">
