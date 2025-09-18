@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import {useToast} from "@/components/toast";
 import {AppConfig, AppSet} from '@/interface/appset';
-import appIcon from "@/assets/unknow.svg";
+import appIcon from "@/assets/whitecat.svg";
 
 const toast = useToast()
 
@@ -75,7 +75,7 @@ const openWithOuterMode = (app: AppSet) => {
 
 <template>
 
-  <div class="w-full sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/7 2xl:w-1/9 min-w-[200px] hover:shadow-lg hover:translate-y-[-2px] transition-all">
+  <div class="hover:shadow-lg hover:translate-y-[-2px] transition-all">
     <div class="group bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:bg-slate-700 cursor-pointer"
          @click="openApp(app)">
       <div class="px-6 py-4 relative">

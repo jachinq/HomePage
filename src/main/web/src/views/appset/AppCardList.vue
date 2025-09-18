@@ -8,14 +8,16 @@ import { batchSaveAppSet, getAppSetList } from "@/api/appSetApi";
 import { AppSet, AppType } from "@/interface/appset";
 import { useToast } from '@/components/toast';
 import EditModal from "@/views/appset/EditModal.vue";
+import { useScreenSizeStore } from '@/stores/screenSizeStore';
 
 const toast = useToast();
+const screenSizeStore = useScreenSizeStore();
 
 const appSet = ref<AppSet[]>([]);
 const total = ref(0);
 const totalPages = ref(0);
 const pageNum = ref(1);
-const pageSize = ref(30);
+const pageSize = ref(32);
 const openModal = ref({ add: false, set: false });
 const appSetData = ref<AppSet | null>();
 const changeAppSort = ref(false)
@@ -120,15 +122,13 @@ watch(() => props.searchValue, () => {
   refresh();
 })
 
-
-
 </script>
 
 <template>
   <div class="flex-grow mt-2">
     <div class="flex mt-2 items-center gap-4">
       <span class="text-2xl font-bold">{{ props.type === AppType.SYS ? '系统应用' : props.type === AppType.APP ? '应用' : '书签'
-        }}</span>
+      }}</span>
       <span class="hover:text-blue-400 cursor-pointer select-none underline" @click="openSaveModal(null)">添加</span>
       <span class="hover:text-blue-400 cursor-pointer select-none underline" @click="refresh">刷新</span>
       <span v-if="changeAppSort" class="hover:text-blue-400 cursor-pointer select-none underline"
@@ -136,16 +136,34 @@ watch(() => props.searchValue, () => {
     </div>
 
     <div class="flex flex-wrap gap-2 items-center">
-      <Draggable :list="appSet" class="flex flex-wrap gap-2 items-center w-full" @change="changeAppSort = true">
-        <transition-group>
+      <template v-if="!screenSizeStore.isSmall">
+        <Draggable :list="appSet" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-4 items-center w-full" @change="changeAppSort = true">
+          <transition-group>
+            <AppCard v-for="app in appSet" :app="app" :config-data="props.configData" :key="app.id">
+              <span
+                class="hidden group-hover:block text-sm text-gray-400 hover:underline hover:cursor-pointer hover:text-blue-300 bg-slate-800 px-2 rounded-2xl"
+                @click.prevent.stop="openSaveModal(app)">
+                修改
+              </span>
+            </AppCard>
+          </transition-group>
+        </Draggable>
+
+      </template>
+
+      <!-- 小屏幕禁止拖拽排序 -->
+      <template v-else>
+        <div class="grid grid-cols-1 gap-2 items-center w-full">
           <AppCard v-for="app in appSet" :app="app" :config-data="props.configData" :key="app.id">
-            <span class="hidden group-hover:block text-sm text-gray-400 hover:underline hover:cursor-pointer hover:text-blue-300 bg-slate-800 px-2 rounded-2xl"
+            <span
+              class="hidden group-hover:block text-sm text-gray-400 hover:underline hover:cursor-pointer hover:text-blue-300 bg-slate-800 px-2 rounded-2xl"
               @click.prevent.stop="openSaveModal(app)">
               修改
             </span>
           </AppCard>
-        </transition-group>
-      </Draggable>
+        </div>
+      </template>
+
 
       <div v-if="appSet.length === 0">
         暂无数据

@@ -50,7 +50,7 @@ refresh();
 </script>
 
 <template>
-  <div class="min-h-full min-w-lg">
+  <div class="min-h-full">
     
       <SystemRoute :config-data="configData" />
      
